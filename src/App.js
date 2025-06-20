@@ -25,20 +25,20 @@ const TRANSITION = "TRANSITION";
 const stateDescriptions = {
   OFF: { desc: 'Device is off. Valve is closed.' },
   BATTERY: {
-    desc: 'The upper LED shows the battery level. Green means full, Orange means medium, Red means low. ',
-    detailed: 'The battery level indicator helps you know when to replace the battery. A green LED means the battery is full and will last more than 3 months. An orange LED means the battery is at a medium level and should last more than 1 month. A red LED means the battery is low and has less than 1 month left, but the device will still work. If you plan to be away for a few days, replace the battery when it is low. If you are staying nearby and can check the device once a day, you can wait until the battery is completely empty, which will be shown by a blinking red LED.'
+    desc: 'The upper LED indicates the battery status: green for full, orange for medium, and red for low.',
+    detailed: 'The battery indicator provides guidance for battery replacement: green indicates more than 3 months of operation remaining, orange indicates more than 1 month, and red indicates less than 1 month (device remains functional). For extended absences, replace the battery when the indicator turns red. If regular monitoring is possible, replacement can be delayed until the indicator blinks red, signaling the battery is depleted.'
   },
   MANUAL: { 
-    desc: 'Valve was manually openend by the user. Independent of the currently measured soil moisture the valve will stay open until A: A short button press by the user or B: The valve has been manually open for 15 Minutes' ,
-    detailed: 'Manually opening the valve can be useful if you want to water your plants immediately without waiting for the soil moisture to drop. The valve will remain open until you press the button again or it has been open for 15 minutes. This allows you to control the watering process directly, especially if you notice that your plants need water urgently. It can also be handy when you want to test your irrigation system (hoses, drippers, sprinklers) or if you want to test the water flow through the valve itself.'},
+    desc: 'The valve has been manually opened by the user. It will remain open regardless of soil moisture until either a short button press occurs or 15 minutes have elapsed.',
+    detailed: 'Manual mode allows immediate irrigation, independent of current soil moisture readings. This is useful for urgent watering needs, system testing, or verifying water flow. The valve will close automatically after 15 minutes or when the button is pressed again.'},
   SLEEP: { desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.' },
-  SELECTTHRESHOLD: { desc: 'Select between opening threshold and multiplicator adjustment. ' },
-  SELECTMULTIPLICATOR: { desc: 'Select between opening threshold and multiplicator adjustment.' },
-  CHANGETHRESHOLD: { desc: 'The current opening threshold is indicated by the number of green LED blinks. The value can be between 1 and 8. If the measured soil moisture is equal to or below this opening threshold, the valve opens. If it is above, the valve closes immediately when the user interface is active (not in Sleep-Mode). When OpenValve is in Sleep-Mode mode the valve closes after a delay determined by the multiplicator setting.' },
+  SELECTTHRESHOLD: { desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.' },
+  SELECTMULTIPLICATOR: { desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.' },
+  CHANGETHRESHOLD: { desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after a delay (set by the multiplicator) in Sleep-Mode.' },
   CHANGEMULTIPLICATOR: { 
     desc: 'The current multiplicator setting is indicated by the number of orange LED blinks. The value can be between 1 and 5. This setting affects the valve closing behavior in Sleep-Mode. A value of 1 means the valve closes immediately when water reaches the soil moisture sensor and the soil moisture rises above the opening threshold. Each higher value increases the time the valve remains open by an additional 50% after the threshold is exceeded (when water reaches the sensor). ',
     detailed: 'For example, the sensor is placed in the soil at a depth of 10 cm. When the multiplicator is set to 1, the valve closes immediately when the water reaches the sensor, meaning that the first 10 cm of soil are watered. If the multiplicator is set to 3, the valve will remain open for an additional 100% (2x) the time it takes for the water to reach the sensor, allowing the water to penetrate 20 cm into the soil before closing. This is useful for deeper watering without needing to reposition the sensor.' },
-  SHOWSOILMOISTURE: { desc: 'The currently measured soil moisture is indicated by the number of green LED blinks. The value can be between 1 and 9. 1 blink = extreme dry soil, 9 blinks = soaking wet soil. The valve opens whenever the current soil moisture is equal to, or below the "Opening Threshold" setting.' },
+  SHOWSOILMOISTURE: { desc: 'The current soil moisture level is indicated by the number of green LED blinks, ranging from 1 (extremely dry) to 9 (saturated). The valve will open whenever the measured soil moisture is less than or equal to the set "Opening Threshold".' },
   ERRORSTATE: { desc: 'An error has occurred. Please reset device.' },
   TRANSITION: { desc: '' },
 };
@@ -639,7 +639,7 @@ function App() {
               <div className="state-soilmoisture-slider-info">
                 <img src={require('./images/soilSensorIcon.PNG')} alt="Soil sensor icon" className="state-soilmoisture-slider-icon" />
                 <span>
-                  Use the slider below to simulate the soil moisture sensor. Changing this value will open/close the valve, based on the set opening treshold. The opening threshold is currently set to {soilLevel}, so dragging the slider at {soilLevel} or below will open the valve, while dragging it above {soilLevel} will close the valve.
+                  Use the slider below to simulate the soil moisture sensor. Adjusting this value will open or close the valve based on the configured opening threshold. The current threshold is set to {soilLevel}; setting the slider to {soilLevel} or below will open the valve, while values above {soilLevel} will close it.
                 </span>
               </div>
               <div className="state-soilmoisture-slider-row">
