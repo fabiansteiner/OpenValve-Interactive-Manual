@@ -448,3 +448,29 @@
   margin-top: -6px;
 }
 
+.state-threshold-soillevel {
+  color: #2ecc40; /* brighter green */
+  font-weight: 700;
+  font-size: 1.08em;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(60,80,60,0.10);
+  font-family: inherit;
+  vertical-align: middle;
+  line-height: 1.1;
+  display: inline-block;
+}
+
+.state-multiplicator-value {
+  color: #ff9800; /* orange */
+  font-weight: 700;
+  font-size: 1.08em;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(80,60,30,0.10);
+  font-family: inherit;
+  vertical-align: middle;
+  line-height: 1.1;
+  display: inline-block;
+}
+

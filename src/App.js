@@ -10,10 +10,10 @@ const STATES = {
   BATTERY: "Display Battery Level",
   MANUAL: "Manually Open",
   SLEEP: "Sleep",
-  SELECTTHRESHOLD: "Opening Threshold",
-  SELECTMULTIPLICATOR: "Multiplicator",
-  CHANGETHRESHOLD: "Adjust Opening Threshold",
-  CHANGEMULTIPLICATOR: "Adjust Multiplicator",
+  SELECTTHRESHOLD: "Select Opening Threshold",
+  SELECTMULTIPLICATOR: "Select Multiplicator",
+  CHANGETHRESHOLD: "Opening Threshold:",
+  CHANGEMULTIPLICATOR: "Multiplicator:",
   SHOWSOILMOISTURE: "Display Current Soil Moisture",
   ERRORSTATE: "Error State",
   TRANSITION: "TRANSITION", // Special state for blocking animations during transitions
@@ -627,7 +627,22 @@ function App() {
       {/* State Info Card: description and possible transitions */}
       {getStateKeyByValue(state) !== "TRANSITION" && (
         <div className="state-info-card">
-          <div className="state-info-title">{state}</div>
+          <div className="state-info-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {getStateKeyByValue(state) === "CHANGETHRESHOLD" ? (
+              <>
+                Opening Threshold:
+                <span className="state-threshold-soillevel">{soilLevel}</span>
+              </>
+            ) : getStateKeyByValue(state) === "CHANGEMULTIPLICATOR" ? (
+              <>
+                Multiplicator:
+                <span className="state-multiplicator-value">{multiplicator}</span>
+              </>
+            ) : (
+              state
+            )}
+          </div>
+          {/* Remove the duplicate soilLevel info below the title */}
           <div className="state-info-desc">{stateDescriptions[getStateKeyByValue(state)].desc}</div>
           {/* Expandable detailed description if available */}
           {stateDescriptions[getStateKeyByValue(state)].detailed && stateDescriptions[getStateKeyByValue(state)].detailed.trim() !== '' && (
