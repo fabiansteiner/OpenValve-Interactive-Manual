@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #f9fafb;
+}
+
+@keyframes battery {
+  0% { background-color: red; }
+  33% { background-color: orange; }
+  66% { background-color: green; }
+  100% { background-color: red; }
+}
+
+@keyframes blip {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
