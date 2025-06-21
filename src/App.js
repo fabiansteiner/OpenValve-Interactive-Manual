@@ -5,7 +5,7 @@ import WaterBackground from "./WaterBackground";
 
 const TIMEOUT_SECONDS = 3000; // 5 minutes timeout
 
-const STATES = {
+const STATES = Object.freeze({
   OFF: "OFF",
   BATTERY: "BATTERY",
   MANUAL: "MANUAL",
@@ -16,10 +16,9 @@ const STATES = {
   CHANGEMULTIPLICATOR: "CHANGEMULTIPLICATOR",
   SHOWSOILMOISTURE: "SHOWSOILMOISTURE",
   ERRORSTATE: "ERRORSTATE",
-  TRANSITION: "TRANSITION", // Special state for blocking animations during transitions
-};
+  TRANSITION: "TRANSITION" // Special state for blocking animations during transitions
+});
 
-const TRANSITION = "TRANSITION";
 
 // UI text for each state, for i18n/multi-language support
 const stateDescriptions = {
@@ -118,6 +117,24 @@ const possibleActions = {
 };
 
 
+// UI text for general UI (not state-specific)
+const uiText = {
+  mainHeading: "OpenValve UI",
+  pressToStart: "Press Button to get started",
+  sliderInfoText: (soilLevel) =>
+    `Use the slider below to simulate the soil moisture sensor. Adjusting this value will open or close the valve based on the configured opening threshold. The current threshold is set to ${soilLevel}; setting the slider to ${soilLevel} or below will open the valve, while values above ${soilLevel} will close it.`,
+  sliderLabel: "Soil Moisture:",
+  detailedShowMore: "Show more",
+  detailedShowLess: "Show less",
+  valveOpened: "Valve opened",
+  valveClosed: "Valve closed",
+  openingThresholdLabel: "Opening Threshold:",
+  multiplicatorLabel: "Multiplicator:",
+  pressTypeShort: "Short Press",
+  pressTypeLong: "Long Press",
+  pressTypeVeryLong: "Very Long Press",
+};
+
 // Expandable/collapsable detailed description component
 function DetailedDescription({ text }) {
   const [expanded, setExpanded] = React.useState(false);
@@ -128,7 +145,7 @@ function DetailedDescription({ text }) {
         onClick={() => setExpanded(e => !e)}
         aria-expanded={expanded}
       >
-        {expanded ? 'Show less' : 'Show more'}
+        {expanded ? uiText.detailedShowLess : uiText.detailedShowMore}
       </button>
       {expanded && (
         <div className="detailed-desc-content">
@@ -168,7 +185,7 @@ function App() {
     let blinkCount = 0;
     let blinkOn = false;
 
-    if (state === TRANSITION) {
+    if (state === STATES.TRANSITION) {
       // Block all LED animations during transition
       setBlueLedBlink(false);
       setRgbLedBlink(false);
@@ -364,10 +381,10 @@ function App() {
     }
     console.log(`Valve state changed: ${valveState}`);
     if (valveState === "OPEN") {
-      setPopupMessage("Valve opened");
+      setPopupMessage(uiText.valveOpened);
       setShowPopup(true);
     } else if (valveState === "CLOSED") {
-      setPopupMessage("Valve closed");
+      setPopupMessage(uiText.valveClosed);
       setShowPopup(true);
     }
     if (valveState === "OPEN" || valveState === "CLOSED") {
@@ -399,9 +416,9 @@ function App() {
   }, [state]);
 
   const getPressTypeLabel = () => {
-    if (pressDuration < 1) return 'Short Press';
-    if (pressDuration < 2) return 'Long Press';
-    return 'Very Long Press';
+    if (pressDuration < 1) return uiText.pressTypeShort;
+    if (pressDuration < 2) return uiText.pressTypeLong;
+    return uiText.pressTypeVeryLong;
   };
 
   const getProgressBarColor = () => {
@@ -478,7 +495,7 @@ function App() {
 
   // Helper: double green blink, then callback
   const doubleGreenBlink = (cb) => {
-    setState(TRANSITION); // Set to a special state to block other animations
+    setState(STATES.TRANSITION); // Set to a special state to block other animations
     setRgbLedBlink(false);
     setBlueLedBlink(false);
     setRgbLedColor("transparent");
@@ -522,7 +539,7 @@ function App() {
   };
 
   const blinkRedThreeTimes = (cb) => {
-    setState(TRANSITION); // Block other animations
+    setState(STATES.TRANSITION); // Block other animations
     setRgbLedBlink(false);
     setBlueLedBlink(false);
     setRgbLedColor("transparent");
@@ -567,7 +584,7 @@ function App() {
           {popupMessage}
         </div>
       )}
-      <h1>OpenValve UI</h1>
+      <h1>{uiText.mainHeading}</h1>
       {/* Background image behind LEDs and button */}
       <div className="valve-bg-container">
         <img
@@ -580,7 +597,7 @@ function App() {
           {!buttonEverPressed && (
             <div className="press-to-start-message">
               <span className="press-to-start-text">
-                Press Button to get started
+                {uiText.pressToStart}
               </span>
               <svg className="press-to-start-arrow" width="48" height="48" viewBox="0 0 48 48">
                 <g>
@@ -646,17 +663,17 @@ function App() {
         </div>
       </div>
       {/* State Info Card: description and possible transitions */}
-      {state !== "TRANSITION" && (
+      {state !== STATES.TRANSITION && (
         <div className="state-info-card">
           <div className="state-info-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {state === "CHANGETHRESHOLD" ? (
+            {state === STATES.CHANGETHRESHOLD ? (
               <>
-                {stateDescriptions[state]?.uiLabel || "Opening Threshold:"}
+                {stateDescriptions[state]?.uiLabel || uiText.openingThresholdLabel}
                 <span className="state-threshold-soillevel">{soilLevel}</span>
               </>
-            ) : state === "CHANGEMULTIPLICATOR" ? (
+            ) : state === STATES.CHANGEMULTIPLICATOR ? (
               <>
-                {stateDescriptions[state]?.uiLabel || "Multiplicator:"}
+                {stateDescriptions[state]?.uiLabel || uiText.multiplicatorLabel}
                 <span className="state-multiplicator-value">{multiplicator}</span>
               </>
             ) : (
@@ -672,12 +689,12 @@ function App() {
               <div className="state-soilmoisture-slider-info">
                 <img src={require('./images/soilSensorIcon.PNG')} alt="Soil sensor icon" className="state-soilmoisture-slider-icon" />
                 <span>
-                  Use the slider below to simulate the soil moisture sensor. Adjusting this value will open or close the valve based on the configured opening threshold. The current threshold is set to {soilLevel}; setting the slider to {soilLevel} or below will open the valve, while values above {soilLevel} will close it.
+                  {uiText.sliderInfoText(soilLevel)}
                 </span>
               </div>
               <div className="state-soilmoisture-slider-row">
                 <label htmlFor="soilMoistureSlider" className="state-soilmoisture-slider-label">
-                  Soil Moisture:
+                  {uiText.sliderLabel}
                 </label>
                 <input
                   id="soilMoistureSlider"
