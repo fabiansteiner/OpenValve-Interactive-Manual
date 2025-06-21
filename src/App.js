@@ -7,40 +7,69 @@ const TIMEOUT_SECONDS = 3000; // 5 minutes timeout
 
 const STATES = {
   OFF: "OFF",
-  BATTERY: "Display Battery Level",
-  MANUAL: "Manually Open",
-  SLEEP: "Sleep",
-  SELECTTHRESHOLD: "Select Opening Threshold",
-  SELECTMULTIPLICATOR: "Select Multiplicator",
-  CHANGETHRESHOLD: "Opening Threshold:",
-  CHANGEMULTIPLICATOR: "Multiplicator:",
-  SHOWSOILMOISTURE: "Display Current Soil Moisture",
-  ERRORSTATE: "Error State",
+  BATTERY: "BATTERY",
+  MANUAL: "MANUAL",
+  SLEEP: "SLEEP",
+  SELECTTHRESHOLD: "SELECTTHRESHOLD",
+  SELECTMULTIPLICATOR: "SELECTMULTIPLICATOR",
+  CHANGETHRESHOLD: "CHANGETHRESHOLD",
+  CHANGEMULTIPLICATOR: "CHANGEMULTIPLICATOR",
+  SHOWSOILMOISTURE: "SHOWSOILMOISTURE",
+  ERRORSTATE: "ERRORSTATE",
   TRANSITION: "TRANSITION", // Special state for blocking animations during transitions
 };
 
 const TRANSITION = "TRANSITION";
 
-// Move these above the App component:
+// UI text for each state, for i18n/multi-language support
 const stateDescriptions = {
-  OFF: { desc: 'Device is off. Valve is closed.' },
+  OFF: {
+    uiLabel: "Off",
+    desc: 'Device is off. Valve is closed.'
+  },
   BATTERY: {
+    uiLabel: "Display Battery Level",
     desc: 'The upper LED indicates the battery status: green for full, orange for medium, and red for low.',
     detailed: 'The battery indicator provides guidance for battery replacement: green indicates more than 3 months of operation remaining, orange indicates more than 1 month, and red indicates less than 1 month (device remains functional). For extended absences, replace the battery when the indicator turns red. If regular monitoring is possible, replacement can be delayed until the indicator blinks red, signaling the battery is depleted.'
   },
-  MANUAL: { 
+  MANUAL: {
+    uiLabel: "Manually Open",
     desc: 'The valve has been manually opened by the user. It will remain open regardless of soil moisture until either a short button press occurs or 15 minutes have elapsed.',
-    detailed: 'Manual mode allows immediate irrigation, independent of current soil moisture readings. This is useful for urgent watering needs, system testing, or verifying water flow. The valve will close automatically after 15 minutes or when the button is pressed again.'},
-  SLEEP: { desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.' },
-  SELECTTHRESHOLD: { desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.' },
-  SELECTMULTIPLICATOR: { desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.' },
-  CHANGETHRESHOLD: { desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after a delay (set by the multiplicator) in Sleep-Mode.' },
-  CHANGEMULTIPLICATOR: { 
+    detailed: 'Manual mode allows immediate irrigation, independent of current soil moisture readings. This is useful for urgent watering needs, system testing, or verifying water flow. The valve will close automatically after 15 minutes or when the button is pressed again.'
+  },
+  SLEEP: {
+    uiLabel: "Sleep",
+    desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.'
+  },
+  SELECTTHRESHOLD: {
+    uiLabel: "Select Opening Threshold",
+    desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.'
+  },
+  SELECTMULTIPLICATOR: {
+    uiLabel: "Select Multiplicator",
+    desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.'
+  },
+  CHANGETHRESHOLD: {
+    uiLabel: "Opening Threshold:",
+    desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after a delay (set by the multiplicator) in Sleep-Mode.'
+  },
+  CHANGEMULTIPLICATOR: {
+    uiLabel: "Multiplicator:",
     desc: 'The current multiplicator setting is indicated by the number of orange LED blinks. The value can be between 1 and 5. This setting affects the valve closing behavior in Sleep-Mode. A value of 1 means the valve closes immediately when water reaches the soil moisture sensor and the soil moisture rises above the opening threshold. Each higher value increases the time the valve remains open by an additional 50% after the threshold is exceeded (when water reaches the sensor). ',
-    detailed: 'For example, the sensor is placed in the soil at a depth of 10 cm. When the multiplicator is set to 1, the valve closes immediately when the water reaches the sensor, meaning that the first 10 cm of soil are watered. If the multiplicator is set to 3, the valve will remain open for an additional 100% (2x) the time it takes for the water to reach the sensor, allowing the water to penetrate 20 cm into the soil before closing. This is useful for deeper watering without needing to reposition the sensor.' },
-  SHOWSOILMOISTURE: { desc: 'The current soil moisture level is indicated by the number of green LED blinks, ranging from 1 (extremely dry) to 9 (saturated). The valve will open whenever the measured soil moisture is less than or equal to the set "Opening Threshold".' },
-  ERRORSTATE: { desc: 'An error has occurred. Please reset device.' },
-  TRANSITION: { desc: '' },
+    detailed: 'For example, the sensor is placed in the soil at a depth of 10 cm. When the multiplicator is set to 1, the valve closes immediately when the water reaches the sensor, meaning that the first 10 cm of soil are watered. If the multiplicator is set to 3, the valve will remain open for an additional 100% (2x) the time it takes for the water to reach the sensor, allowing the water to penetrate 20 cm into the soil before closing. This is useful for deeper watering without needing to reposition the sensor.'
+  },
+  SHOWSOILMOISTURE: {
+    uiLabel: "Display Current Soil Moisture",
+    desc: 'The current soil moisture level is indicated by the number of green LED blinks, ranging from 1 (extremely dry) to 9 (saturated). The valve will open whenever the measured soil moisture is less than or equal to the set "Opening Threshold".'
+  },
+  ERRORSTATE: {
+    uiLabel: "Error State",
+    desc: 'An error has occurred. Please reset device.'
+  },
+  TRANSITION: {
+    uiLabel: "",
+    desc: ''
+  },
 };
 
 const possibleActions = {
@@ -89,14 +118,6 @@ const possibleActions = {
 };
 
 
-
-
-// Add this helper above the App component:
-function getStateKeyByValue(val) {
-  const stateKey = Object.keys(stateDescriptions).find(key => STATES[key] === val);
-  return stateKey || "UNKNOWN_STATE";
-}
-
 // Expandable/collapsable detailed description component
 function DetailedDescription({ text }) {
   const [expanded, setExpanded] = React.useState(false);
@@ -119,7 +140,7 @@ function DetailedDescription({ text }) {
 }
 
 function App() {
-  const [state, setState] = useState("Sleep");
+  const [state, setState] = useState(STATES.SLEEP);
   const [pressStart, setPressStart] = useState(null);
   const [blueLedBlink, setBlueLedBlink] = useState(false);
   const [rgbLedColor, setRgbLedColor] = useState("transparent");
@@ -625,31 +646,28 @@ function App() {
         </div>
       </div>
       {/* State Info Card: description and possible transitions */}
-      {getStateKeyByValue(state) !== "TRANSITION" && (
+      {state !== "TRANSITION" && (
         <div className="state-info-card">
           <div className="state-info-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {getStateKeyByValue(state) === "CHANGETHRESHOLD" ? (
+            {state === "CHANGETHRESHOLD" ? (
               <>
-                Opening Threshold:
+                {stateDescriptions[state]?.uiLabel || "Opening Threshold:"}
                 <span className="state-threshold-soillevel">{soilLevel}</span>
               </>
-            ) : getStateKeyByValue(state) === "CHANGEMULTIPLICATOR" ? (
+            ) : state === "CHANGEMULTIPLICATOR" ? (
               <>
-                Multiplicator:
+                {stateDescriptions[state]?.uiLabel || "Multiplicator:"}
                 <span className="state-multiplicator-value">{multiplicator}</span>
               </>
             ) : (
-              state
+              stateDescriptions[state]?.uiLabel || state
             )}
           </div>
-          {/* Remove the duplicate soilLevel info below the title */}
-          <div className="state-info-desc">{stateDescriptions[getStateKeyByValue(state)].desc}</div>
-          {/* Expandable detailed description if available */}
-          {stateDescriptions[getStateKeyByValue(state)].detailed && stateDescriptions[getStateKeyByValue(state)].detailed.trim() !== '' && (
-            <DetailedDescription text={stateDescriptions[getStateKeyByValue(state)].detailed} />
+          <div className="state-info-desc">{stateDescriptions[state]?.desc || ''}</div>
+          {stateDescriptions[state]?.detailed && stateDescriptions[state]?.detailed.trim() !== '' && (
+            <DetailedDescription text={stateDescriptions[state].detailed} />
           )}
-          {/* Show soilMoisture slider only in SHOWSOILMOISTURE state */}
-          {getStateKeyByValue(state) === "SHOWSOILMOISTURE" && (
+          {state === "SHOWSOILMOISTURE" && (
             <>
               <div className="state-soilmoisture-slider-info">
                 <img src={require('./images/soilSensorIcon.PNG')} alt="Soil sensor icon" className="state-soilmoisture-slider-icon" />
@@ -674,13 +692,11 @@ function App() {
               </div>
             </>
           )}
-          {/* Separation line between description and actions */}
           <hr className="state-info-separator" />
           <div>
-            {possibleActions[getStateKeyByValue(state)] && possibleActions[getStateKeyByValue(state)].map((action, idx) => {
-              // Disable (gray out) the 'Long Press' to MANUAL if valveState is OPEN and current state is SHOWSOILMOISTURE
+            {possibleActions[state] && possibleActions[state].map((action, idx) => {
               const isManualLongPress =
-                getStateKeyByValue(state) === "SHOWSOILMOISTURE" &&
+                state === "SHOWSOILMOISTURE" &&
                 action.label === "Long Press" &&
                 action.targetState === "MANUAL";
               const isDisabled = isManualLongPress && valveState === "OPEN";
