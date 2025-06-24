@@ -3,10 +3,10 @@ import WaterBackground from "./WaterBackground";
 import "./App.css";
 
 // Language loader
-function getLangModule() {
-  const lang = (navigator.language || navigator.userLanguage || "en").slice(0, 2).toLowerCase();
+function getLangModule(lang) {
+  const l = (lang || navigator.language || navigator.userLanguage || "en").slice(0, 2).toLowerCase();
   try {
-    switch (lang) {
+    switch (l) {
       case "de":
         return require("./lang/de.js");
       case "ro":
@@ -18,11 +18,6 @@ function getLangModule() {
     return require("./lang/en.js");
   }
 }
-const langModule = getLangModule();
-const stateDescriptions = langModule.stateDescriptions;
-const possibleActions = langModule.possibleActions;
-const uiText = langModule.uiText;
-
 
 const TIMEOUT_SECONDS = 3000; // 5 minutes timeout
 
@@ -40,7 +35,7 @@ const STATES = Object.freeze({
   TRANSITION: "TRANSITION" // Special state for blocking animations during transitions
 });
 
-function DetailedDescription({ text }) {
+function DetailedDescription({ text, uiText }) {
   const [expanded, setExpanded] = React.useState(false);
   return (
     <div style={{ margin: '8px 0 10px 0' }}>
@@ -55,6 +50,58 @@ function DetailedDescription({ text }) {
         <div className="detailed-desc-content">
           {text}
         </div>
+      )}
+    </div>
+  );
+}
+
+function LanguageDropdown({ currentLang, onChange }) {
+  const [open, setOpen] = React.useState(false);
+  const languages = [
+    { code: "de", label: "DE" },
+    { code: "en", label: "EN" },
+    { code: "ro", label: "RO" }
+  ];
+  const handleSelect = (code) => {
+    setOpen(false);
+    if (code !== currentLang) onChange(code);
+  };
+  React.useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [open]);
+  return (
+    <div className="lang-dropdown-container" onClick={e => e.stopPropagation()}>
+      <button
+        className="lang-dropdown-toggle"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen(o => !o)}
+        onTouchEnd={e => { e.preventDefault(); setOpen(o => !o); }}
+      >
+        {languages.find(l => l.code === currentLang)?.label || currentLang.toUpperCase()}
+        <span className="lang-dropdown-arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" style={{ display: 'block' }}>
+            <polyline points="5,7 9,11 13,7" fill="none" stroke="#888" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      {open && (
+        <ul className="lang-dropdown-list" role="listbox">
+          {languages.map(l => (
+            <li
+              key={l.code}
+              className={`lang-dropdown-item${l.code === currentLang ? " selected" : ""}`}
+              onClick={() => handleSelect(l.code)}
+              role="option"
+              aria-selected={l.code === currentLang}
+            >
+              {l.label}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
@@ -83,6 +130,13 @@ function App() {
   const progressTimerRef = React.useRef();
   const pressStartRef = React.useRef(null);
   const isFirstValveState = React.useRef(true); // <-- Add this line
+
+  // Track language for dropdown (default: browser or en)
+  const [lang, setLang] = React.useState((window.location.search.match(/lang=([a-z]{2})/)?.[1] || (navigator.language || "en").slice(0,2).toLowerCase()));
+  const langModule = React.useMemo(() => getLangModule(lang), [lang]);
+  const stateDescriptions = langModule.stateDescriptions;
+  const possibleActions = langModule.possibleActions;
+  const uiText = langModule.uiText;
 
   useEffect(() => {
     let timers = [];
@@ -481,6 +535,7 @@ function App() {
 
   return (
     <div className="App">
+      <LanguageDropdown currentLang={lang} onChange={setLang} />
       <WaterBackground valveState={valveState} />
       {/* Valve state popup */}
       {showPopup && (
@@ -586,7 +641,7 @@ function App() {
           </div>
           <div className="state-info-desc">{stateDescriptions[state]?.desc || ''}</div>
           {stateDescriptions[state]?.detailed && stateDescriptions[state]?.detailed.trim() !== '' && (
-            <DetailedDescription text={stateDescriptions[state].detailed} />
+            <DetailedDescription text={stateDescriptions[state].detailed} uiText={uiText} />
           )}
           {state === "SHOWSOILMOISTURE" && (
             <>

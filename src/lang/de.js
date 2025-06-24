@@ -55,7 +55,7 @@ export const possibleActions = {
   ],
   BATTERY: [
     { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Aktuelle Bodenfeuchte anzeigen' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Bewässerungseinstellungen ändern' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Einstellungen ändern' },
     { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
   ],
   MANUAL: [
