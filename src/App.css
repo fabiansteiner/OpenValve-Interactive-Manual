@@ -204,14 +204,30 @@
   color: #222;
   font-size: 3em;
   z-index: 10;
-  position: relative;
-  top: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  top: 80px;
+}
+@media (max-width: 600px) {
+  .App h1 {
+    font-size: 2.2em;
+    top: 60px;
+  }
+
 }
 
 .valve-bg-container {
   position: relative;
   width: fit-content;
-  margin: 0 auto;
+  margin: 150px auto 50px auto
+}
+@media (max-width: 600px) {
+  .valve-bg-container {
+    margin: 130px auto 50px auto
+}
+  
 }
 
 .valve-bg-img {
@@ -283,9 +299,6 @@
   gap: 10px;
   background: rgba(76,175,80,0.10); /* subtle green tint */
   border-left: 4px solid #4caf50;
-
-
-
 }
 .state-soilmoisture-slider-icon {
   width: 4em;
@@ -294,7 +307,7 @@
   min-height: 5em;
   object-fit: contain;
   margin-right: 2px;
-  margin-top: 1px;
+  margin-top: 5px;
   display: inline-block;
   vertical-align: middle;
 }
@@ -357,6 +370,47 @@
     position: relative;
     z-index: 2;
   }
+
+  .state-info-title {
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 6px;
+  }
+  .state-info-desc {
+    margin-bottom: 10px;
+    color: #bbb;
+    font-size: 0.90em;
+  }
+
+  .state-action-dot {
+    width: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+    margin-right: 4px;
+    border: 1px solid #fff3;
+  }
+  .state-action-label {
+    min-width: 75px; /* Increased to fit 'Very Long Press' */
+    max-width: 75px;
+    font-size: 0.88em;
+  }
+  .state-action-arrow {
+    font-size: 1.1em;
+
+  }
+  .state-action-desc {
+
+    font-size: 0.91em;
+
+  }
+
+  .state-soilmoisture-slider-info {
+    font-size: 0.9em;
+  }
+
   .state-soilmoisture-slider-row {
     flex-direction: column;
     align-items: stretch;
@@ -565,6 +619,32 @@
   }
   .lang-dropdown-list {
     min-width: 60px;
+  }
+}
+
+/* Logo in the top left */
+.logo-top-left {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  z-index: 1002;
+  user-select: none;
+  pointer-events: none;
+}
+.logo-img {
+  height: 38px;
+  width: auto;
+  opacity: 0.88;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.04));
+  display: block;
+}
+@media (max-width: 600px) {
+  .logo-top-left {
+    top: 8px;
+    left: 8px;
+  }
+  .logo-img {
+    height: 28px;
   }
 }
 

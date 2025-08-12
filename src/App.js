@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WaterBackground from "./WaterBackground";
 import "./App.css";
+import OpenValveLogo from './images/openvalve_logo_dark_turned_withText_Montserrat.svg';
 
 // Language loader
 function getLangModule(lang) {
@@ -103,6 +104,19 @@ function LanguageDropdown({ currentLang, onChange }) {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function LogoTopLeft() {
+  return (
+    <div className="logo-top-left">
+      <img
+        src={OpenValveLogo}
+        alt="OpenValve Logo"
+        className="logo-img"
+        draggable="false"
+      />
     </div>
   );
 }
@@ -535,6 +549,7 @@ function App() {
 
   return (
     <div className="App">
+      <LogoTopLeft />
       <LanguageDropdown currentLang={lang} onChange={setLang} />
       <WaterBackground valveState={valveState} />
       {/* Valve state popup */}
@@ -671,9 +686,9 @@ function App() {
           <hr className="state-info-separator" />
           <div>
             {possibleActions[state] && possibleActions[state].map((action, idx) => {
+              // Disable 'Open Valve manually' (Long Press to MANUAL) if valve is already open
               const isManualLongPress =
                 state === "SHOWSOILMOISTURE" &&
-                action.label === "Long Press" &&
                 action.targetState === "MANUAL";
               const isDisabled = isManualLongPress && valveState === "OPEN";
               return (

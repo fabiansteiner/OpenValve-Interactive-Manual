@@ -16,7 +16,8 @@ export const stateDescriptions = {
   },
   SLEEP: {
     uiLabel: "Sleep",
-    desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.'
+    desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.',
+    detailed: 'When the valve is closed, OpenValve will take a new soil moisture measurement every hour. When the valve is openend, OpenValve will take measurements every 4 seconds the first 3 minutes, every 16 seconds until 10 minutes and every 60 seconds after that. The blue LED will blink shortly every time a new measurement is taken.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Select Opening Threshold",
@@ -28,7 +29,7 @@ export const stateDescriptions = {
   },
   CHANGETHRESHOLD: {
     uiLabel: "Opening Threshold:",
-    desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after a delay (set by the multiplicator) in Sleep-Mode.'
+    desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after an optional delay (set by the multiplicator) in Sleep-Mode.'
   },
   CHANGEMULTIPLICATOR: {
     uiLabel: "Multiplicator:",
@@ -95,7 +96,7 @@ export const possibleActions = {
 };
 
 export const uiText = {
-  mainHeading: "OpenValve UI",
+  mainHeading: "Interactive Manual",
   pressToStart: "Press Button to get started",
   sliderInfoText: (soilLevel) =>
     `Use the slider below to simulate the soil moisture sensor. Adjusting this value will open or close the valve based on the configured opening threshold. The current threshold is set to ${soilLevel}; setting the slider to ${soilLevel} or below will open the valve, while values above ${soilLevel} will close it.`,

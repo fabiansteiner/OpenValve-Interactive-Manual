@@ -16,7 +16,8 @@ export const stateDescriptions = {
   },
   SLEEP: {
     uiLabel: "Schlafmodus",
-    desc: 'OpenValve befindet sich im Schlafmodus. Das Ventil öffnet und schließt entsprechend den Benutzereinstellungen. Im Schlafmodus reagiert OpenValve langsamer auf Änderungen der Bodenfeuchte, um die Batterie zu schonen. Jedes Mal, wenn OpenValve eine neue Messung der Bodenfeuchte durchführt, blinkt die blaue LED kurz.'
+    desc: 'OpenValve befindet sich im Schlafmodus. Das Ventil öffnet und schließt entsprechend den Benutzereinstellungen. Im Schlafmodus reagiert OpenValve langsamer auf Änderungen der Bodenfeuchte, um die Batterie zu schonen. Jedes Mal, wenn OpenValve eine neue Messung der Bodenfeuchte durchführt, blinkt die blaue LED kurz.',
+    detailed: 'Wenn das Ventil geschlossen ist, führt OpenValve stündlich eine neue Bodenfeuchtigkeitsmessung durch. Wenn das Ventil geöffnet ist, führt OpenValve in den ersten 3 Minuten alle 4 Sekunden, bis zu 10 Minuten alle 16 Sekunden und danach alle 60 Sekunden Messungen durch. Die blaue LED blinkt kurz, sobald eine neue Messung durchgeführt wird.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Öffnungsschwellwert wählen",
@@ -28,7 +29,7 @@ export const stateDescriptions = {
   },
   CHANGETHRESHOLD: {
     uiLabel: "Öffnungsschwellwert:",
-    desc: 'Der Öffnungsschwellwert, angezeigt durch die Anzahl der grünen LED-Blinks (1–8), definiert, wie trocken der Boden sein muss, bevor die nächste Bewässerung startet. Wenn die gemessene Bodenfeuchte auf oder unter diesem Schwellenwert liegt, öffnet das Ventil. Liegt sie darüber, schließt das Ventil sofort, wenn das Gerät aktiv ist (d. h. nicht im Schlafmodus oder ausgeschaltet), oder nach einer Verzögerung (festgelegt durch den Multiplikator) im Schlafmodus.'
+    desc: 'Der Öffnungsschwellwert, angezeigt durch die Anzahl der grünen LED-Blinks (1–8), definiert, wie trocken der Boden sein muss, bevor die nächste Bewässerung startet. Wenn die gemessene Bodenfeuchte auf oder unter diesem Schwellenwert liegt, öffnet das Ventil. Liegt sie darüber, schließt das Ventil sofort, wenn das Gerät aktiv ist (d. h. nicht im Schlafmodus oder ausgeschaltet), oder nach einer optionalen Verzögerung (festgelegt durch den Multiplikator) im Schlafmodus.'
   },
   CHANGEMULTIPLICATOR: {
     uiLabel: "Multiplikator:",
@@ -95,8 +96,8 @@ export const possibleActions = {
 };
 
 export const uiText = {
-  mainHeading: "OpenValve UI",
-  pressToStart: "Zum Starten bitte die Taste drücken",
+  mainHeading: "Interaktives Handbuch",
+  pressToStart: "Zum Starten Taste drücken",
   sliderInfoText: (soilLevel) =>
     `Verwenden Sie den Schieberegler unten, um den Bodenfeuchtesensor zu simulieren. Durch das Anpassen dieses Wertes wird das Ventil entsprechend dem eingestellten Öffnungsschwellwert geöffnet oder geschlossen. Der aktuelle Schwellwert ist ${soilLevel}; wenn der Schieberegler auf ${soilLevel} oder weniger eingestellt ist, öffnet das Ventil, bei höheren Werten schließt es.`,
   sliderLabel: "Bodenfeuchte:",

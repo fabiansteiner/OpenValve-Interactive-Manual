@@ -16,7 +16,8 @@ export const stateDescriptions = {
   },
   SLEEP: {
     uiLabel: "Mod repaus",
-    desc: 'OpenValve este în modul repaus. Supapa se deschide/închide conform setărilor utilizatorului. În modul repaus, OpenValve reacționează mai lent la schimbările de umiditate a solului pentru a economisi bateria. De fiecare dată când OpenValve efectuează o nouă măsurare a umidității solului, LED-ul albastru clipește scurt.'
+    desc: 'OpenValve este în modul repaus. Supapa se deschide/închide conform setărilor utilizatorului. În modul repaus, OpenValve reacționează mai lent la schimbările de umiditate a solului pentru a economisi bateria. De fiecare dată când OpenValve efectuează o nouă măsurare a umidității solului, LED-ul albastru clipește scurt.',
+    detailed: 'Când supapa este închisă, OpenValve va efectua o nouă măsurătoare a umidității solului la fiecare oră. Când supapa este deschisă, OpenValve va efectua măsurători la fiecare 4 secunde în primele 3 minute, la fiecare 16 secunde până la 10 minute și la fiecare 60 de secunde după aceea. LED-ul albastru va clipi scurt de fiecare dată când se efectuează o nouă măsurătoare.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Selectează pragul de deschidere",
@@ -95,7 +96,7 @@ export const possibleActions = {
 };
 
 export const uiText = {
-  mainHeading: "OpenValve UI",
+  mainHeading: "Manual Interactiv",
   pressToStart: "Apăsați butonul pentru a începe",
   sliderInfoText: (soilLevel) =>
     `Folosiți sliderul de mai jos pentru a simula senzorul de umiditate a solului. Ajustarea acestei valori va deschide sau închide supapa în funcție de pragul de deschidere configurat. Pragul curent este ${soilLevel}; setarea sliderului la ${soilLevel} sau mai puțin va deschide supapa, iar valorile peste ${soilLevel} o vor închide.`,
