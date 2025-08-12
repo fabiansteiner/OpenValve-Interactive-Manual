@@ -20,25 +20,25 @@ export const stateDescriptions = {
     detailed: 'Wenn das Ventil geschlossen ist, führt OpenValve stündlich eine neue Bodenfeuchtigkeitsmessung durch. Wenn das Ventil geöffnet ist, führt OpenValve in den ersten 3 Minuten alle 4 Sekunden, bis zu 10 Minuten alle 16 Sekunden und danach alle 60 Sekunden Messungen durch. Die blaue LED blinkt kurz, sobald eine neue Messung durchgeführt wird.'
   },
   SELECTTHRESHOLD: {
-    uiLabel: "Öffnungsschwellwert wählen",
-    desc: 'Wählen Sie, ob Sie den Öffnungsschwellwert oder die Multiplikatoreinstellung anpassen möchten.'
+    uiLabel: "Öffnungsschwellenwert wählen",
+    desc: 'Wählen Sie, ob Sie den Öffnungsschwellenwert oder die Multiplikatoreinstellung anpassen möchten.'
   },
   SELECTMULTIPLICATOR: {
     uiLabel: "Multiplikator wählen",
-    desc: 'Wählen Sie, ob Sie den Öffnungsschwellwert oder die Multiplikatoreinstellung anpassen möchten.'
+    desc: 'Wählen Sie, ob Sie den Öffnungsschwellenwert oder die Multiplikatoreinstellung anpassen möchten.'
   },
   CHANGETHRESHOLD: {
-    uiLabel: "Öffnungsschwellwert:",
-    desc: 'Der Öffnungsschwellwert, angezeigt durch die Anzahl der grünen LED-Blinks (1–8), definiert, wie trocken der Boden sein muss, bevor die nächste Bewässerung startet. Wenn die gemessene Bodenfeuchte auf oder unter diesem Schwellenwert liegt, öffnet das Ventil. Liegt sie darüber, schließt das Ventil sofort, wenn das Gerät aktiv ist (d. h. nicht im Schlafmodus oder ausgeschaltet), oder nach einer optionalen Verzögerung (festgelegt durch den Multiplikator) im Schlafmodus.'
+    uiLabel: "Öffnungsschwellenwert:",
+    desc: 'Der Öffnungsschwellenwert, angezeigt durch die Anzahl der grünen LED-Blinks (1–8), definiert, wie trocken der Boden sein muss, bevor die nächste Bewässerung startet. Wenn die gemessene Bodenfeuchte auf oder unter diesem Schwellenwert liegt, öffnet das Ventil. Liegt sie darüber, schließt das Ventil sofort, wenn das Gerät aktiv ist (d. h. nicht im Schlafmodus oder ausgeschaltet), oder nach einer optionalen Verzögerung (festgelegt durch den Multiplikator) im Schlafmodus.'
   },
   CHANGEMULTIPLICATOR: {
     uiLabel: "Multiplikator:",
-    desc: 'Die aktuelle Multiplikatoreinstellung wird durch die Anzahl der orangefarbenen LED-Blinks angezeigt. Der Wert kann zwischen 1 und 5 liegen. Diese Einstellung beeinflusst das Schließverhalten des Ventils im Schlafmodus. Ein Wert von 1 bedeutet, dass das Ventil sofort schließt, sobald das Wasser den Bodenfeuchtesensor erreicht und die Bodenfeuchte über den Öffnungsschwellwert steigt. Jeder höhere Wert verlängert die Zeit, die das Ventil nach Überschreiten des Schwellenwerts (wenn das Wasser den Sensor erreicht) zusätzlich geöffnet bleibt, um jeweils 50 %.',
+    desc: 'Die aktuelle Multiplikatoreinstellung wird durch die Anzahl der orangefarbenen LED-Blinks angezeigt. Der Wert kann zwischen 1 und 5 liegen. Diese Einstellung beeinflusst das Schließverhalten des Ventils im Schlafmodus. Ein Wert von 1 bedeutet, dass das Ventil sofort schließt, sobald das Wasser den Bodenfeuchtesensor erreicht und die Bodenfeuchte über den Öffnungsschwellenwert steigt. Jeder höhere Wert verlängert die Zeit, die das Ventil nach Überschreiten des Schwellenwerts (wenn das Wasser den Sensor erreicht) zusätzlich geöffnet bleibt, um jeweils 50 %.',
     detailed: 'Beispiel: Der Sensor ist in einer Tiefe von 10 cm im Boden platziert. Ist der Multiplikator auf 1 gesetzt, schließt das Ventil sofort, wenn das Wasser den Sensor erreicht, sodass die ersten 10 cm des Bodens bewässert werden. Ist der Multiplikator auf 3 gesetzt, bleibt das Ventil für zusätzliche 100 % (2x) der Zeit geöffnet, die das Wasser benötigt, um den Sensor zu erreichen. Dadurch kann das Wasser bis zu 20 cm tief in den Boden eindringen, bevor das Ventil schließt. Dies ist nützlich für eine tiefere Bewässerung, ohne den Sensor umsetzen zu müssen. Diese Einstellung ist nur wirksam wenn das Ventil im Schlafmodus ist.'
   },
   SHOWSOILMOISTURE: {
     uiLabel: "Aktuelle Bodenfeuchte anzeigen",
-    desc: 'Der aktuelle Bodenfeuchtewert wird durch die Anzahl der grünen LED-Blinks angezeigt, von 1 (extrem trocken) bis 9 (gesättigt). Das Ventil öffnet, wenn die gemessene Bodenfeuchte kleiner oder gleich dem eingestellten Öffnungsschwellwert ist.'
+    desc: 'Der aktuelle Bodenfeuchtewert wird durch die Anzahl der grünen LED-Blinks angezeigt, von 1 (extrem trocken) bis 9 (gesättigt). Das Ventil öffnet, wenn die gemessene Bodenfeuchte kleiner oder gleich dem eingestellten Öffnungsschwellenwert ist.'
   },
   ERRORSTATE: {
     uiLabel: "Fehlerzustand",
@@ -68,16 +68,16 @@ export const possibleActions = {
   ],
   SELECTTHRESHOLD: [
     { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Zu Multiplikator wechseln' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellwert anpassen' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellenwert anpassen' },
     { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
   ],
   SELECTMULTIPLICATOR: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Zu Öffnungsschwellwert wechseln' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Zu Öffnungsschwellenwert wechseln' },
     { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Multiplikator anpassen' },
     { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
   ],
   CHANGETHRESHOLD: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellwert erhöhen' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellenwert erhöhen' },
     { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SLEEP', desc: 'Einstellung speichern und in den Schlafmodus wechseln' },
   ],
   CHANGEMULTIPLICATOR: [
@@ -99,13 +99,13 @@ export const uiText = {
   mainHeading: "Interaktives Handbuch",
   pressToStart: "Zum Starten Taste drücken",
   sliderInfoText: (soilLevel) =>
-    `Verwenden Sie den Schieberegler unten, um den Bodenfeuchtesensor zu simulieren. Durch das Anpassen dieses Wertes wird das Ventil entsprechend dem eingestellten Öffnungsschwellwert geöffnet oder geschlossen. Der aktuelle Schwellwert ist ${soilLevel}; wenn der Schieberegler auf ${soilLevel} oder weniger eingestellt ist, öffnet das Ventil, bei höheren Werten schließt es.`,
+    `Verwenden Sie den Schieberegler unten, um den Bodenfeuchtesensor zu simulieren. Durch das Anpassen dieses Wertes wird das Ventil entsprechend dem eingestellten Öffnungsschwellenwert geöffnet oder geschlossen. Der aktuelle Schwellwert ist ${soilLevel}; wenn der Schieberegler auf ${soilLevel} oder weniger eingestellt ist, öffnet das Ventil, bei höheren Werten schließt es.`,
   sliderLabel: "Bodenfeuchte:",
   detailedShowMore: "Mehr anzeigen",
   detailedShowLess: "Weniger anzeigen",
   valveOpened: "Ventil geöffnet",
   valveClosed: "Ventil geschlossen",
-  openingThresholdLabel: "Öffnungsschwellwert:",
+  openingThresholdLabel: "Öffnungsschwellenwert:",
   multiplicatorLabel: "Multiplikator:",
   pressTypeShort: "Kurzer Tastendruck",
   pressTypeLong: "Langer Tastendruck",

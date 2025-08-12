@@ -558,7 +558,7 @@ function App() {
           {popupMessage}
         </div>
       )}
-      <h1>{uiText.mainHeading}</h1>
+      <h1 className={!buttonEverPressed ? "main-heading-large" : "main-heading-small"}>{uiText.mainHeading}</h1>
       {/* Background image behind LEDs and button */}
       <div className="valve-bg-container">
         <img
@@ -592,7 +592,7 @@ function App() {
           </div>
           {/* Always reserve space for the press type label above the button */}
           <div
-            className="press-type-label"
+            className={`press-type-label${isPressed ? ' visible' : ''}`}
             style={{ color: isPressed ? getProgressBarColor() : 'transparent', textShadow: isPressed ? '0 1px 4px rgba(0,0,0,0.18)' : 'none' }}
           >
             {isPressed ? getPressTypeLabel() : ''}
