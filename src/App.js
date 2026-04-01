@@ -111,12 +111,14 @@ function LanguageDropdown({ currentLang, onChange }) {
 function LogoTopLeft() {
   return (
     <div className="logo-top-left">
-      <img
+      <a href="https://open-valve.com">
+        <img
         src={OpenValveLogo}
         alt="OpenValve Logo"
         className="logo-img"
         draggable="false"
-      />
+        />
+      </a>
     </div>
   );
 }
@@ -562,7 +564,7 @@ function App() {
       {/* Background image behind LEDs and button */}
       <div className="valve-bg-container">
         <img
-          src={require('./images/OpenValve1.PNG')}
+          src={require('./images/OpenValve_scaledDown.PNG')}
           alt="Valve background"
           className="valve-bg-img"
         />
