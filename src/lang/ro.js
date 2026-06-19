@@ -6,43 +6,44 @@ export const stateDescriptions = {
   },
   BATTERY: {
     uiLabel: "Afișare nivel baterie",
-    desc: 'LED-ul superior indică starea bateriei: verde pentru plin, portocaliu pentru mediu și roșu pentru descărcat.',
-    detailed: 'Indicatorul de baterie oferă informații pentru înlocuirea bateriei: verde indică peste 3 luni de funcționare rămase, portocaliu peste 1 lună, iar roșu sub 1 lună (dispozitivul rămâne funcțional). Pentru absențe prelungite, înlocuiți bateria când indicatorul devine roșu. Dacă monitorizarea este regulată, înlocuirea poate fi amânată până când indicatorul clipește roșu, semnalând descărcarea completă a bateriei.'
+    desc: 'LED-ul superior indică starea bateriei: verde pentru plină, portocaliu pentru medie, roșu pentru scăzută, roșu intermitent pentru foarte scăzută.',
+    detailed: 'Indicatorul bateriei oferă informații despre autonomia rămasă: verde indică peste 2 luni de funcționare rămase, portocaliu peste 1 lună, roșu sub 1 lună, iar roșu intermitent indică faptul că bateria este aproape descărcată. Înaintea absențelor mai lungi, înlocuiți bateria când indicatorul clipește roșu. Dacă monitorizarea regulată este posibilă, înlocuirea poate fi amânată până la descărcarea completă (OpenValve se oprește și trece în stare de eroare).'
   },
   MANUAL: {
     uiLabel: "Deschidere manuală",
-    desc: 'Supapa a fost deschisă manual de utilizator. Va rămâne deschisă indiferent de umiditatea solului până la o apăsare scurtă sau după 15 minute.',
+    desc: 'Supapa a fost deschisă manual de utilizator. LED-ul albastru clipește lent. Va rămâne deschisă indiferent de umiditatea actuală a solului până la o apăsare scurtă sau până la trecerea a 15 minute.',
     detailed: 'Modul manual permite irigarea imediată, indiferent de valorile actuale ale umidității solului. Acest lucru este util pentru udări urgente, testarea sistemului sau verificarea fluxului de apă. Supapa se va închide automat după 15 minute sau la o nouă apăsare a butonului.'
   },
   SLEEP: {
     uiLabel: "Mod repaus",
-    desc: 'OpenValve este în modul repaus. Supapa se deschide/închide conform setărilor utilizatorului. În modul repaus, OpenValve reacționează mai lent la schimbările de umiditate a solului pentru a economisi bateria. De fiecare dată când OpenValve efectuează o nouă măsurare a umidității solului, LED-ul albastru clipește scurt.',
-    detailed: 'Când supapa este închisă, OpenValve va efectua o nouă măsurătoare a umidității solului la fiecare oră. Când supapa este deschisă, OpenValve va efectua măsurători la fiecare 4 secunde în primele 3 minute, la fiecare 16 secunde până la 10 minute și la fiecare 60 de secunde după aceea. LED-ul albastru va clipi scurt de fiecare dată când se efectuează o nouă măsurătoare.'
+    desc: 'În această stare, OpenValve udă normal conform setărilor configurate de utilizator. Se numește „mod repaus” deoarece reacționează foarte lent la schimbările de umiditate a solului pentru a economisi bateria. De fiecare dată când OpenValve preia o nouă măsurătoare de umiditate de la senzor, LED-ul albastru clipește scurt.',
+    detailed: 'Când supapa este închisă, OpenValve efectuează o nouă măsurătoare a umidității solului la fiecare oră. Când supapa este deschisă, OpenValve măsoară la fiecare 4 secunde în primele 3 minute, la fiecare 16 secunde până la 10 minute și la fiecare 60 de secunde după aceea.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Selectează pragul de deschidere",
-    desc: 'Alegeți dacă doriți să ajustați pragul de deschidere sau setarea multiplicatorului.'
+    desc: 'Alegeți între Pragul de deschidere și setarea Timp suplimentar.'
   },
   SELECTMULTIPLICATOR: {
-    uiLabel: "Selectează multiplicatorul",
-    desc: 'Alegeți dacă doriți să ajustați pragul de deschidere sau setarea multiplicatorului.'
+    uiLabel: "Selectează Timp suplimentar",
+    desc: 'Alegeți între Pragul de deschidere și setarea Timp suplimentar.'
   },
   CHANGETHRESHOLD: {
-    uiLabel: "Prag de deschidere:",
-    desc: 'Pragul de deschidere, indicat de numărul de clipiri verzi ale LED-ului (1–8), definește cât de uscat trebuie să fie solul înainte de următoarea irigare. Dacă umiditatea măsurată este la sau sub acest prag, supapa se deschide. Dacă este peste, supapa se închide imediat când dispozitivul este activ (adică nu este în modul repaus sau oprit), sau după o întârziere (setată de multiplicator) în modul repaus.'
+    uiLabel: "Modifică Pragul de deschidere:",
+    desc: 'Pragul de deschidere determină când începe udarea: valoare mai mică = mai târziu (mai uscat), valoare mai mare = mai devreme (mai umed). Valoarea este indicată de numărul de clipiri verzi ale LED-ului superior. Supapa se deschide când umiditatea curentă a solului este la sau sub Pragul de deschidere și se închide când umiditatea solului este peste acest prag.',
+    detailed: 'Valorile Pragului de deschidere sunt între 1 și 8 și definesc cât de devreme începe udarea: valorile mici udă mai târziu (sol mai uscat), valorile mari udă mai devreme (sol mai umed). În practică, valoarea 1 așteaptă până când solul este foarte uscat, iar valoarea 8 începe udarea mult mai devreme. Exemplu: cu pragul setat la 4, supapa se deschide la umiditate 4 sau mai mică și se închide peste 4. Modificările se aplică imediat, fără pas suplimentar de salvare.'
   },
   CHANGEMULTIPLICATOR: {
-    uiLabel: "Multiplicator:",
-    desc: 'Setarea curentă a multiplicatorului este indicată de numărul de clipiri portocalii ale LED-ului. Valoarea poate fi între 1 și 5. Această setare afectează comportamentul de închidere a supapei în modul repaus. O valoare de 1 înseamnă că supapa se închide imediat când apa ajunge la senzorul de umiditate și umiditatea solului crește peste pragul de deschidere. Fiecare valoare mai mare crește timpul în care supapa rămâne deschisă cu încă 50% după depășirea pragului (când apa ajunge la senzor).',
-    detailed: 'De exemplu, senzorul este plasat în sol la o adâncime de 10 cm. Dacă multiplicatorul este setat la 1, supapa se închide imediat când apa ajunge la senzor, ceea ce înseamnă că primii 10 cm de sol sunt udați. Dacă multiplicatorul este setat la 3, supapa va rămâne deschisă pentru încă 100% (de două ori) din timpul necesar apei să ajungă la senzor, permițând apei să pătrundă până la 20 cm adâncime înainte de a se închide. Acest lucru este util pentru udarea mai profundă fără a repoziționa senzorul.'
+    uiLabel: "Modifică Timpul suplimentar:",
+    desc: 'Timpul suplimentar controlează cât timp rămâne supapa deschisă după ce apa ajunge la senzor. Valoarea este între 1 și 5 și afectează udarea doar în modul repaus. 1 = fără timp suplimentar, 2 = +50% timp suplimentar, 3 = +100% timp suplimentar, 4 = +150% timp suplimentar, 5 = +200% timp suplimentar.',
+    detailed: 'Când OpenValve se deschide, începe să măsoare cât timp durează până când umiditatea solului la senzor crește peste Pragul de deschidere. Apoi adaugă timp suplimentar de udare pe baza acestei setări. Exemplu: dacă apa ajunge la senzor după 10 minute de udare, timpul total de udare devine 10 min (fără timp suplimentar) cu Timp suplimentar 1, 15 min (+50%) cu 2, 20 min (+100%) cu 3, 25 min (+150%) cu 4 și 30 min (+200%) cu 5. Valorile mai mici udă mai puțin, iar valorile mai mari udă mai mult și mai profund.'
   },
   SHOWSOILMOISTURE: {
     uiLabel: "Afișează umiditatea solului",
-    desc: 'Nivelul actual al umidității solului este indicat de numărul de clipiri verzi ale LED-ului, de la 1 (extrem de uscat) la 9 (saturat). Supapa se va deschide ori de câte ori umiditatea măsurată este mai mică sau egală cu pragul de deschidere setat.'
+    desc: 'Umiditatea curentă a solului este indicată de numărul de clipiri verzi ale LED-ului superior, de la 1 (extrem de uscat) la 9 (saturat). Supapa se deschide ori de câte ori umiditatea curentă a solului este mai mică sau egală cu "Pragul de deschidere" setat.'
   },
   ERRORSTATE: {
     uiLabel: "Stare de eroare",
-    desc: 'A apărut o eroare. Vă rugăm să resetați dispozitivul.'
+    desc: 'A apărut o eroare. Vă rugăm să resetați Dispozitivul.'
   },
   TRANSITION: {
     uiLabel: "",
@@ -55,42 +56,42 @@ export const possibleActions = {
     { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'BATTERY', desc: 'Porniți dispozitivul' },
   ],
   BATTERY: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Afișează umiditatea solului' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Modificați setările de irigare' },
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Opriți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Afișează Umiditatea curentă a solului' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Modifică Setările de irigare' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Oprește' },
   ],
   MANUAL: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Închideți supapa și afișați umiditatea solului' },
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Opriți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Închide supapa și Afișează Umiditatea curentă a solului' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Oprește' },
   ],
   SLEEP: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'BATTERY', desc: 'Treziți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'BATTERY', desc: 'Afișează Nivelul bateriei' },
   ],
   SELECTTHRESHOLD: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Comutați la multiplicator' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Ajustați pragul de deschidere' },
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Opriți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Selectează Timp suplimentar' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Modifică Pragul de deschidere' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Oprește' },
   ],
   SELECTMULTIPLICATOR: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Comutați la pragul de deschidere' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Ajustați multiplicatorul' },
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Opriți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Selectează Pragul de deschidere' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Modifică Timpul suplimentar' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Oprește' },
   ],
   CHANGETHRESHOLD: [
     { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Creșteți pragul de deschidere' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SLEEP', desc: 'Salvați setarea și treceți în modul repaus' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SLEEP', desc: 'Mod repaus' },
   ],
   CHANGEMULTIPLICATOR: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Creșteți multiplicatorul' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SLEEP', desc: 'Salvați setarea și treceți în modul repaus' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Crește Timpul suplimentar' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'SLEEP', desc: 'Mod repaus' },
   ],
   SHOWSOILMOISTURE: [
-    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'BATTERY', desc: 'Afișează nivelul bateriei' },
-    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'MANUAL', desc: 'Deschideți supapa manual' },
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Opriți dispozitivul' },
+    { label: 'Apăsare scurtă', color: '#4caf50', targetState: 'BATTERY', desc: 'Afișează Nivelul bateriei' },
+    { label: 'Apăsare lungă', color: '#ff9800', targetState: 'MANUAL', desc: 'Deschide supapa manual' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Oprește' },
   ],
   ERRORSTATE: [
-    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Resetați dispozitivul' },
+    { label: 'Apăsare foarte lungă', color: '#f44336', targetState: 'OFF', desc: 'Resetează Dispozitivul' },
   ],
   TRANSITION: [],
 };
@@ -99,14 +100,14 @@ export const uiText = {
   mainHeading: "Manual Interactiv",
   pressToStart: "Apăsați butonul pentru a începe",
   sliderInfoText: (soilLevel) =>
-    `Folosiți sliderul de mai jos pentru a simula senzorul de umiditate a solului. Ajustarea acestei valori va deschide sau închide supapa în funcție de pragul de deschidere configurat. Pragul curent este ${soilLevel}; setarea sliderului la ${soilLevel} sau mai puțin va deschide supapa, iar valorile peste ${soilLevel} o vor închide.`,
+    `Folosiți sliderul de mai jos pentru a simula umiditatea curentă a solului. Ajustarea sliderului are același efect ca introducerea și scoaterea senzorului de umiditate într-un pahar plin cu apă pe dispozitivul real. Ajustarea acestei valori va deschide sau închide supapa în funcție de Pragul de deschidere configurat. Pragul de deschidere este setat în prezent la ${soilLevel}: Asta înseamnă că setarea sliderului la ${soilLevel} sau mai puțin va deschide supapa, iar valorile peste ${soilLevel} o vor închide.`,
   sliderLabel: "Umiditate sol:",
   detailedShowMore: "Afișează mai mult",
   detailedShowLess: "Afișează mai puțin",
   valveOpened: "Supapa a fost deschisă",
   valveClosed: "Supapa a fost închisă",
-  openingThresholdLabel: "Prag de deschidere:",
-  multiplicatorLabel: "Multiplicator:",
+  openingThresholdLabel: "Pragul curent de deschidere:",
+  currentSoilMoistureLabel: "Umiditatea curentă a solului:",
   pressTypeShort: "Apăsare scurtă",
   pressTypeLong: "Apăsare lungă",
   pressTypeVeryLong: "Apăsare foarte lungă",

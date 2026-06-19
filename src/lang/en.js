@@ -6,43 +6,44 @@ export const stateDescriptions = {
   },
   BATTERY: {
     uiLabel: "Display Battery Level",
-    desc: 'The upper LED indicates the battery status: green for full, orange for medium, and red for low.',
-    detailed: 'The battery indicator provides guidance for battery replacement: green indicates more than 3 months of operation remaining, orange indicates more than 1 month, and red indicates less than 1 month (device remains functional). For extended absences, replace the battery when the indicator turns red. If regular monitoring is possible, replacement can be delayed until the indicator blinks red, signaling the battery is depleted.'
+    desc: 'The upper LED indicates the battery status: green for full, orange for medium, red for low, red blinking for very low.',
+    detailed: 'The battery indicator provides info regarding the remaining battery life: green indicates more than 2 months of operation remaining, orange indicates more than 1 month, red indicates less than 1 month and red blinking indicates that the battery is almost depleted. Before longer absences, replace the battery when the indicator is blinking red. If regular monitoring is possible, replacement can be delayed until the battery is fully depleted (OpenValve stops working and switches to an error state).'
   },
   MANUAL: {
     uiLabel: "Manually Open",
-    desc: 'The valve has been manually opened by the user. It will remain open regardless of soil moisture until either a short button press occurs or 15 minutes have elapsed.',
+    desc: 'The valve has been manually opened by the user. The blue LED is slowly blinking. It will remain open regardless of the current soil moisture until either a short button press occurs or 15 minutes have elapsed.',
     detailed: 'Manual mode allows immediate irrigation, independent of current soil moisture readings. This is useful for urgent watering needs, system testing, or verifying water flow. The valve will close automatically after 15 minutes or when the button is pressed again.'
   },
   SLEEP: {
     uiLabel: "Sleep",
-    desc: 'OpenValve is in Sleep-Mode. The Valve opens/closes following the user settings. In Sleep-Mode OpenValve reacts slower to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED blinks shortly.',
-    detailed: 'When the valve is closed, OpenValve will take a new soil moisture measurement every hour. When the valve is openend, OpenValve will take measurements every 4 seconds the first 3 minutes, every 16 seconds until 10 minutes and every 60 seconds after that. The blue LED will blink shortly every time a new measurement is taken.'
+    desc: 'In this state OpenValve waters normally following the configured user settings. It is called "sleep" state because it reacts very slowly to changes in the soil moisture to save battery. Every time OpenValve takes a new soil moisture measurement from the sensor, the blue LED briefly blinks.',
+    detailed: 'When the valve is closed, OpenValve will take a new soil moisture measurement every hour. When the valve is openend, OpenValve will take measurements every 4 seconds the first 3 minutes, every 16 seconds until 10 minutes and every 60 seconds after that.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Select Opening Threshold",
-    desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.'
+    desc: 'Choose between the Opening Threshold or the Additional Time setting.'
   },
   SELECTMULTIPLICATOR: {
-    uiLabel: "Select Multiplicator",
-    desc: 'Choose whether to adjust the opening threshold or the multiplicator setting.'
+    uiLabel: "Select Additional Time",
+    desc: 'Choose between the Opening Threshold or the Additional Time setting.'
   },
   CHANGETHRESHOLD: {
-    uiLabel: "Opening Threshold:",
-    desc: 'The opening threshold, shown by the number of green LED blinks (1–8), defines how dry the soil must get before the next irrigation starts. If the measured soil moisture is at or below this threshold, the valve opens. If above, the valve closes immediately when the device is active (i.e., not in Sleep-Mode or Off), or after an optional delay (set by the multiplicator) in Sleep-Mode.'
+    uiLabel: "Change Opening Threshold:",
+    desc: 'The Opening Threshold determines when watering starts: lower value = later (drier), higher value = earlier (wetter). The value is shown by the number of green LED blinks on the upper LED. The valve opens when current soil moisture is at or below the Opening Threshold, and closes when soil moisture is above it.',
+    detailed: 'Opening Threshold values run from 1 to 8 and define how early watering starts: low values water later (drier soil), high values water earlier (wetter soil). In practice, 1 waits until the soil is very dry, while 8 starts watering much earlier. Example: with threshold 4, the valve opens at soil moisture 4 or lower, and closes above 4. Changes are applied immediately, so no extra save step is needed.'
   },
   CHANGEMULTIPLICATOR: {
-    uiLabel: "Multiplicator:",
-    desc: 'The current multiplicator setting is indicated by the number of orange LED blinks. The value can be between 1 and 5. This setting affects the valve closing behavior in Sleep-Mode. A value of 1 means the valve closes immediately when water reaches the soil moisture sensor and the soil moisture rises above the opening threshold. Each higher value increases the time the valve remains open by an additional 50% after the threshold is exceeded (when water reaches the sensor). ',
-    detailed: 'For example, the sensor is placed in the soil at a depth of 10 cm. When the multiplicator is set to 1, the valve closes immediately when the water reaches the sensor, meaning that the first 10 cm of soil are watered. If the multiplicator is set to 3, the valve will remain open for an additional 100% (2x) the time it takes for the water to reach the sensor, allowing the water to penetrate 20 cm into the soil before closing. This is useful for deeper watering without needing to reposition the sensor.'
+    uiLabel: "Change Additional Time:",
+    desc: 'Additional Time controls how much longer the valve stays open after water reaches the sensor. It ranges from 1 to 5 and affects watering only in the sleep state. 1 = no extra time, 2 = +50% extra time, 3 = +100% extra time, 4 = +150% extra time, 5 = +200% extra time.',
+    detailed: 'When OpenValve opens, it starts measuring how long it takes until the soil moisture at the sensor rises above the Opening Threshold. It then adds extra watering time based on this setting. Example: if water reaches the sensor after 10 minutes of watering, total watering time becomes 10 min (no extra time) with Additional Time 1, 15 min (+50%)  with 2, 20 min (+100%)  with 3, 25 min (+150%) with 4, and 30 min (+200%) with 5. Use lower values to water shorter; use higher values for longer and more thorough watering.'
   },
   SHOWSOILMOISTURE: {
     uiLabel: "Display Current Soil Moisture",
-    desc: 'The current soil moisture level is indicated by the number of green LED blinks, ranging from 1 (extremely dry) to 9 (saturated). The valve will open whenever the measured soil moisture is less than or equal to the set "Opening Threshold".'
+    desc: 'The Current Soil Moisture is indicated by the number of green LED blinks on the upper LED, ranging from 1 (extremely dry) to 9 (saturated). The valve will open whenever the current soil moisture is less than or equal to the set "Opening Threshold".'
   },
   ERRORSTATE: {
     uiLabel: "Error State",
-    desc: 'An error has occurred. Please reset device.'
+    desc: 'An error has occurred. Please reset Device.'
   },
   TRANSITION: {
     uiLabel: "",
@@ -55,42 +56,42 @@ export const possibleActions = {
     { label: 'Very Long Press', color: '#f44336', targetState: 'BATTERY', desc: 'Turn on device' },
   ],
   BATTERY: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Display current soil moisture' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Change irrigation settings' },
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn off' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Display Current Soil Moisture' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Change Irrigation Settings' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn Off' },
   ],
   MANUAL: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Close valve and display current soil moisture' },
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn off' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Close Valve and Display Current Soil Moisture' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn Off' },
   ],
   SLEEP: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'BATTERY', desc: 'Wake up' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'BATTERY', desc: 'Display Battery Level' },
   ],
   SELECTTHRESHOLD: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Switch to multiplicator' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Adjust opening treshold' },
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn off' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Select Additional Time' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Change Opening Threshold' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn Off' },
   ],
   SELECTMULTIPLICATOR: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Switch to opening threshold' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Adjust multiplicator' },
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn off' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Select Opening Threshold' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Change Additional Time' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn Off' },
   ],
   CHANGETHRESHOLD: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Increase opening threshold' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'SLEEP', desc: 'Save setting and sleep' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Increase Opening Threshold' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'SLEEP', desc: 'Sleep' },
   ],
   CHANGEMULTIPLICATOR: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Increase multiplicator' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'SLEEP', desc: 'Save setting and sleep' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Increase Additional Time' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'SLEEP', desc: 'Sleep' },
   ],
   SHOWSOILMOISTURE: [
-    { label: 'Short Press', color: '#4caf50', targetState: 'BATTERY', desc: 'Display battery level' },
-    { label: 'Long Press', color: '#ff9800', targetState: 'MANUAL', desc: 'Open Valve manually' },
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn off' },
+    { label: 'Short Press', color: '#4caf50', targetState: 'BATTERY', desc: 'Display Battery Level' },
+    { label: 'Long Press', color: '#ff9800', targetState: 'MANUAL', desc: 'Manually opens the valve' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Turn Off' },
   ],
   ERRORSTATE: [
-    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Reset device' },
+    { label: 'Very Long Press', color: '#f44336', targetState: 'OFF', desc: 'Reset Device' },
   ],
   TRANSITION: [],
 };
@@ -99,15 +100,16 @@ export const uiText = {
   mainHeading: "Interactive Manual",
   pressToStart: "Press Button to get started",
   sliderInfoText: (soilLevel) =>
-    `Use the slider below to simulate the soil moisture sensor. Adjusting this value will open or close the valve based on the configured opening threshold. The current threshold is set to ${soilLevel}; setting the slider to ${soilLevel} or below will open the valve, while values above ${soilLevel} will close it.`,
+    `Use the slider below to simulate the current soil moisture. Adjusting the slider has the same effect as dipping the soil moisture sensor in and out of a full glass of water on the real device. Adjusting this value will open or close the valve based on the configured Opening Threshold. The Opening Threshold is currently set to ${soilLevel}: That means setting the slider to ${soilLevel} or below will open the valve, while values above ${soilLevel} will close it.`,
   sliderLabel: "Soil Moisture:",
   detailedShowMore: "Show more",
   detailedShowLess: "Show less",
   valveOpened: "Valve opened",
   valveClosed: "Valve closed",
-  openingThresholdLabel: "Opening Threshold:",
-  multiplicatorLabel: "Multiplicator:",
+  openingThresholdLabel: "Current Opening Threshold:",
+  currentSoilMoistureLabel: "Current Soil Moisture:",
   pressTypeShort: "Short Press",
   pressTypeLong: "Long Press",
   pressTypeVeryLong: "Very Long Press",
 };
+

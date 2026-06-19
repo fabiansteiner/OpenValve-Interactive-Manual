@@ -6,43 +6,44 @@ export const stateDescriptions = {
   },
   BATTERY: {
     uiLabel: "Batteriestand anzeigen",
-    desc: 'Die obere LED zeigt den Batteriestatus an: Grün für voll, Orange für mittel und Rot für niedrig.',
-    detailed: 'Die Batterieanzeige zeigt den aktuellen Ladestand der Batterie. Grün bedeutet, dass mehr als 3 Monate Betrieb verbleiben, Orange mehr als 1 Monat und Rot weniger als 1 Monat. Bei längerer Abwesenheit sollte die Batterie also gewechselt werden, sobald die Anzeige auf Rot steht. Wenn jedoch eine regelmäßige Kontrolle möglich ist, kann der Wechsel hinausgezögert werden, bis die Anzeige rot blinkt, was das vollständige Entladen der Batterie signalisiert.'
+    desc: 'Die obere LED zeigt den Batteriestatus an: Grün für voll, Orange für mittel, Rot für niedrig, rot blinkend für sehr niedrig.',
+    detailed: 'Die Batterieanzeige gibt Auskunft über die verbleibende Batterielaufzeit: Grün bedeutet mehr als 2 Monate Restlaufzeit, Orange mehr als 1 Monat, Rot weniger als 1 Monat und rot blinkend bedeutet, dass die Batterie fast leer ist. Bei längerer Abwesenheit sollte die Batterie gewechselt werden, wenn die Anzeige rot blinkt. Bei regelmäßiger Kontrolle kann der Wechsel bis zur vollständigen Entladung hinausgezögert werden (OpenValve hört auf zu arbeiten und wechselt in einen Fehlerzustand).'
   },
   MANUAL: {
     uiLabel: "Manuell geöffnet",
-    desc: 'Das Ventil wurde manuell vom Benutzer geöffnet. Es bleibt unabhängig von der Bodenfeuchte geöffnet, bis entweder ein kurzer Tastendruck erfolgt oder 15 Minuten vergangen sind.',
+    desc: 'Das Ventil wurde manuell vom Benutzer geöffnet. Die blaue LED blinkt langsam. Es bleibt unabhängig von der aktuellen Bodenfeuchte geöffnet, bis entweder ein kurzer Tastendruck erfolgt oder 15 Minuten vergangen sind.',
     detailed: 'Der manuelle Modus ermöglicht eine sofortige Bewässerung, unabhängig von den aktuellen Bodenfeuchtewerten. Die manuelle Bewässerung kann für dringende Bewässerungen, Systemtests oder zur Überprüfung des Wasserflusses nützlich sein. Das Ventil schließt automatisch nach 15 Minuten oder wenn die Taste erneut gedrückt wird.'
   },
   SLEEP: {
     uiLabel: "Schlafmodus",
-    desc: 'OpenValve befindet sich im Schlafmodus. Das Ventil öffnet und schließt entsprechend den Benutzereinstellungen. Im Schlafmodus reagiert OpenValve langsamer auf Änderungen der Bodenfeuchte, um die Batterie zu schonen. Jedes Mal, wenn OpenValve eine neue Messung der Bodenfeuchte durchführt, blinkt die blaue LED kurz.',
-    detailed: 'Wenn das Ventil geschlossen ist, führt OpenValve stündlich eine neue Bodenfeuchtigkeitsmessung durch. Wenn das Ventil geöffnet ist, führt OpenValve in den ersten 3 Minuten alle 4 Sekunden, bis zu 10 Minuten alle 16 Sekunden und danach alle 60 Sekunden Messungen durch. Die blaue LED blinkt kurz, sobald eine neue Messung durchgeführt wird.'
+    desc: 'In diesem Zustand bewässert OpenValve normal gemäß den konfigurierten Benutzereinstellungen. Er heißt "Schlafmodus", weil OpenValve sehr langsam auf Änderungen der Bodenfeuchte reagiert, um die Batterie zu schonen. Jedes Mal, wenn OpenValve eine neue Bodenfeuchtemessung vom Sensor aufnimmt, blinkt die blaue LED kurz.',
+    detailed: 'Wenn das Ventil geschlossen ist, führt OpenValve jede Stunde eine neue Bodenfeuchtemessung durch. Wenn das Ventil geöffnet ist, misst OpenValve in den ersten 3 Minuten alle 4 Sekunden, bis zu 10 Minuten alle 16 Sekunden und danach alle 60 Sekunden.'
   },
   SELECTTHRESHOLD: {
     uiLabel: "Öffnungsschwellenwert wählen",
-    desc: 'Wählen Sie, ob Sie den Öffnungsschwellenwert oder die Multiplikatoreinstellung anpassen möchten.'
+    desc: 'Wählen Sie zwischen dem Öffnungsschwellenwert und der Einstellung für Zusätzliche Zeit.'
   },
   SELECTMULTIPLICATOR: {
-    uiLabel: "Multiplikator wählen",
-    desc: 'Wählen Sie, ob Sie den Öffnungsschwellenwert oder die Multiplikatoreinstellung anpassen möchten.'
+    uiLabel: "Zusätzliche Zeit wählen",
+    desc: 'Wählen Sie zwischen dem Öffnungsschwellenwert und der Einstellung für Zusätzliche Zeit.'
   },
   CHANGETHRESHOLD: {
-    uiLabel: "Öffnungsschwellenwert:",
-    desc: 'Der Öffnungsschwellenwert, angezeigt durch die Anzahl der grünen LED-Blinks (1–8), definiert, wie trocken der Boden sein muss, bevor die nächste Bewässerung startet. Wenn die gemessene Bodenfeuchte auf oder unter diesem Schwellenwert liegt, öffnet das Ventil. Liegt sie darüber, schließt das Ventil sofort, wenn das Gerät aktiv ist (d. h. nicht im Schlafmodus oder ausgeschaltet), oder nach einer optionalen Verzögerung (festgelegt durch den Multiplikator) im Schlafmodus.'
+    uiLabel: "Öffnungsschwellenwert ändern:",
+    desc: 'Der Öffnungsschwellenwert bestimmt, wann die Bewässerung startet: niedriger Wert = später (trockener), höherer Wert = früher (feuchter). Der Wert wird durch die Anzahl grüner LED-Blinks der oberen LED angezeigt. Das Ventil öffnet, wenn die aktuelle Bodenfeuchte auf oder unter dem Öffnungsschwellenwert liegt, und schließt, wenn die Bodenfeuchte darüber liegt.',
+    detailed: 'Die Werte des Öffnungsschwellenwerts reichen von 1 bis 8 und bestimmen, wie früh die Bewässerung startet: niedrige Werte bewässern später (trockenerer Boden), hohe Werte früher (feuchterer Boden). In der Praxis wartet Wert 1, bis der Boden sehr trocken ist, während Wert 8 deutlich früher bewässert. Beispiel: Bei Schwellenwert 4 öffnet das Ventil bei Bodenfeuchte 4 oder darunter und schließt oberhalb von 4. Änderungen werden sofort angewendet, ein zusätzlicher Speicherschritt ist nicht nötig.'
   },
   CHANGEMULTIPLICATOR: {
-    uiLabel: "Multiplikator:",
-    desc: 'Die aktuelle Multiplikatoreinstellung wird durch die Anzahl der orangefarbenen LED-Blinks angezeigt. Der Wert kann zwischen 1 und 5 liegen. Diese Einstellung beeinflusst das Schließverhalten des Ventils im Schlafmodus. Ein Wert von 1 bedeutet, dass das Ventil sofort schließt, sobald das Wasser den Bodenfeuchtesensor erreicht und die Bodenfeuchte über den Öffnungsschwellenwert steigt. Jeder höhere Wert verlängert die Zeit, die das Ventil nach Überschreiten des Schwellenwerts (wenn das Wasser den Sensor erreicht) zusätzlich geöffnet bleibt, um jeweils 50 %.',
-    detailed: 'Beispiel: Der Sensor ist in einer Tiefe von 10 cm im Boden platziert. Ist der Multiplikator auf 1 gesetzt, schließt das Ventil sofort, wenn das Wasser den Sensor erreicht, sodass die ersten 10 cm des Bodens bewässert werden. Ist der Multiplikator auf 3 gesetzt, bleibt das Ventil für zusätzliche 100 % (2x) der Zeit geöffnet, die das Wasser benötigt, um den Sensor zu erreichen. Dadurch kann das Wasser bis zu 20 cm tief in den Boden eindringen, bevor das Ventil schließt. Dies ist nützlich für eine tiefere Bewässerung, ohne den Sensor umsetzen zu müssen. Diese Einstellung ist nur wirksam wenn das Ventil im Schlafmodus ist.'
+    uiLabel: "Zusätzliche Zeit ändern:",
+    desc: 'Zusätzliche Zeit steuert, wie lange das Ventil nach Erreichen des Sensors durch Wasser weiter geöffnet bleibt. Der Wert reicht von 1 bis 5 und wirkt sich nur im Schlafmodus auf die Bewässerung aus. 1 = keine zusätzliche Zeit, 2 = +50% zusätzliche Zeit, 3 = +100% zusätzliche Zeit, 4 = +150% zusätzliche Zeit, 5 = +200% zusätzliche Zeit.',
+    detailed: 'Wenn OpenValve öffnet, misst es zunächst, wie lange es dauert, bis die Bodenfeuchte am Sensor über den Öffnungsschwellenwert steigt. Anschließend wird basierend auf dieser Einstellung zusätzliche Bewässerungszeit hinzugefügt. Beispiel: Erreicht Wasser den Sensor nach 10 Minuten Bewässerung, beträgt die gesamte Bewässerungszeit 10 Min. (keine Zusatzzeit) bei Zusätzliche Zeit 1, 15 Min. (+50%) bei 2, 20 Min. (+100%) bei 3, 25 Min. (+150%) bei 4 und 30 Min. (+200%) bei 5. Niedrige Werte bewässern kürzer, höhere Werte länger und gründlicher.'
   },
   SHOWSOILMOISTURE: {
     uiLabel: "Aktuelle Bodenfeuchte anzeigen",
-    desc: 'Der aktuelle Bodenfeuchtewert wird durch die Anzahl der grünen LED-Blinks angezeigt, von 1 (extrem trocken) bis 9 (gesättigt). Das Ventil öffnet, wenn die gemessene Bodenfeuchte kleiner oder gleich dem eingestellten Öffnungsschwellenwert ist.'
+    desc: 'Die aktuelle Bodenfeuchte wird durch die Anzahl grüner LED-Blinks der oberen LED angezeigt, von 1 (extrem trocken) bis 9 (gesättigt). Das Ventil öffnet, wenn die aktuelle Bodenfeuchte kleiner oder gleich dem eingestellten "Öffnungsschwellenwert" ist.'
   },
   ERRORSTATE: {
     uiLabel: "Fehlerzustand",
-    desc: 'Es ist ein Fehler aufgetreten. Bitte das Gerät zurücksetzen.'
+    desc: 'Es ist ein Fehler aufgetreten. Bitte Gerät zurücksetzen.'
   },
   TRANSITION: {
     uiLabel: "",
@@ -56,38 +57,38 @@ export const possibleActions = {
   ],
   BATTERY: [
     { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Aktuelle Bodenfeuchte anzeigen' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Einstellungen ändern' },
-    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SELECTTHRESHOLD', desc: 'Bewässerungseinstellungen ändern' },
+    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Ausschalten' },
   ],
   MANUAL: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Ventil schließen und Bodenfeuchte anzeigen' },
-    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SHOWSOILMOISTURE', desc: 'Ventil schließen und aktuelle Bodenfeuchte anzeigen' },
+    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Ausschalten' },
   ],
   SLEEP: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'BATTERY', desc: 'Gerät aufwecken' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'BATTERY', desc: 'Batteriestand anzeigen' },
   ],
   SELECTTHRESHOLD: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Zu Multiplikator wechseln' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellenwert anpassen' },
-    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTMULTIPLICATOR', desc: 'Zusätzliche Zeit auswählen' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellenwert ändern' },
+    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Ausschalten' },
   ],
   SELECTMULTIPLICATOR: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Zu Öffnungsschwellenwert wechseln' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Multiplikator anpassen' },
-    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'SELECTTHRESHOLD', desc: 'Öffnungsschwellenwert auswählen' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'CHANGEMULTIPLICATOR', desc: 'Zusätzliche Zeit ändern' },
+    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Ausschalten' },
   ],
   CHANGETHRESHOLD: [
     { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'CHANGETHRESHOLD', desc: 'Öffnungsschwellenwert erhöhen' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SLEEP', desc: 'Einstellung speichern und in den Schlafmodus wechseln' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SLEEP', desc: 'Schlafmodus' },
   ],
   CHANGEMULTIPLICATOR: [
-    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Multiplikator erhöhen' },
-    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SLEEP', desc: 'Einstellung speichern und in den Schlafmodus wechseln' },
+    { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'CHANGEMULTIPLICATOR', desc: 'Zusätzliche Zeit erhöhen' },
+    { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'SLEEP', desc: 'Schlafmodus' },
   ],
   SHOWSOILMOISTURE: [
     { label: 'Kurzer Tastendruck', color: '#4caf50', targetState: 'BATTERY', desc: 'Batteriestand anzeigen' },
     { label: 'Langer Tastendruck', color: '#ff9800', targetState: 'MANUAL', desc: 'Ventil manuell öffnen' },
-    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät ausschalten' },
+    { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Ausschalten' },
   ],
   ERRORSTATE: [
     { label: 'Sehr langer Tastendruck', color: '#f44336', targetState: 'OFF', desc: 'Gerät zurücksetzen' },
@@ -99,14 +100,14 @@ export const uiText = {
   mainHeading: "Interaktives Handbuch",
   pressToStart: "Zum Starten Taste drücken",
   sliderInfoText: (soilLevel) =>
-    `Verwenden Sie den Schieberegler unten, um den Bodenfeuchtesensor zu simulieren. Durch das Anpassen dieses Wertes wird das Ventil entsprechend dem eingestellten Öffnungsschwellenwert geöffnet oder geschlossen. Der aktuelle Schwellwert ist ${soilLevel}; wenn der Schieberegler auf ${soilLevel} oder weniger eingestellt ist, öffnet das Ventil, bei höheren Werten schließt es.`,
+    `Verwenden Sie den Schieberegler unten, um die aktuelle Bodenfeuchte zu simulieren. Das Verstellen des Schiebereglers hat denselben Effekt wie das Hinein- und Herausbewegen des Bodenfeuchtesensors in ein volles Glas Wasser am realen Gerät. Das Anpassen dieses Werts öffnet oder schließt das Ventil abhängig vom konfigurierten Öffnungsschwellenwert. Der Öffnungsschwellenwert ist aktuell auf ${soilLevel} gesetzt: Das bedeutet, dass das Ventil bei ${soilLevel} oder darunter öffnet, bei Werten darüber schließt es.`,
   sliderLabel: "Bodenfeuchte:",
   detailedShowMore: "Mehr anzeigen",
   detailedShowLess: "Weniger anzeigen",
   valveOpened: "Ventil geöffnet",
   valveClosed: "Ventil geschlossen",
-  openingThresholdLabel: "Öffnungsschwellenwert:",
-  multiplicatorLabel: "Multiplikator:",
+  openingThresholdLabel: "Aktueller Öffnungsschwellenwert:",
+  currentSoilMoistureLabel: "Aktuelle Bodenfeuchte:",
   pressTypeShort: "Kurzer Tastendruck",
   pressTypeLong: "Langer Tastendruck",
   pressTypeVeryLong: "Sehr langer Tastendruck",

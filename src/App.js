@@ -56,6 +56,18 @@ function DetailedDescription({ text, uiText }) {
   );
 }
 
+function InfoAdmonition({ label, value, accentClass = "" }) {
+  return (
+    <div className={`info-admonition ${accentClass}`.trim()}>
+      <div className="info-admonition-icon" aria-hidden="true">i</div>
+      <div className="info-admonition-body">
+        <span className="info-admonition-label">{label}</span>
+        <span className="info-admonition-value">{value}</span>
+      </div>
+    </div>
+  );
+}
+
 function LanguageDropdown({ currentLang, onChange }) {
   const [open, setOpen] = React.useState(false);
   const languages = [
@@ -131,8 +143,8 @@ function App() {
   const [rgbLedBlink, setRgbLedBlink] = useState(false);
   const [blueLedColor, setBlueLedColor] = useState("transparent"); // New state for blue LED color
   const [batteryLevel, setBatteryLevel] = useState("moderate"); // New state for battery level: 'full', 'moderate', 'empty'
-  const [soilMoisture, setSoilMoisture] = useState(5); // New state for soil moisture
-  const [soilLevel, setSoilLevel] = useState(4); // New state for soilLevel
+  const [soilMoisture, setSoilMoisture] = useState(4); // New state for soil moisture
+  const [soilLevel, setSoilLevel] = useState(1); // New state for soilLevel
   const [multiplicator, setMultiplicator] = useState(1); // New state for multiplicator, initially 1
   const [isPressed, setIsPressed] = useState(false);
   const [timeoutCounter, setTimeoutCounter] = useState(TIMEOUT_SECONDS); // TIMEOUT_SECONDS seconds timeout
@@ -644,12 +656,12 @@ function App() {
           <div className="state-info-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {state === STATES.CHANGETHRESHOLD ? (
               <>
-                {stateDescriptions[state]?.uiLabel || uiText.openingThresholdLabel}
+                {stateDescriptions[state]?.uiLabel}
                 <span className="state-threshold-soillevel">{soilLevel}</span>
               </>
             ) : state === STATES.CHANGEMULTIPLICATOR ? (
               <>
-                {stateDescriptions[state]?.uiLabel || uiText.multiplicatorLabel}
+                {stateDescriptions[state]?.uiLabel}
                 <span className="state-multiplicator-value">{multiplicator}</span>
               </>
             ) : (
@@ -657,6 +669,24 @@ function App() {
             )}
           </div>
           <div className="state-info-desc">{stateDescriptions[state]?.desc || ''}</div>
+          {state === STATES.SHOWSOILMOISTURE && (
+            <>
+              <InfoAdmonition
+                label={uiText.openingThresholdLabel || 'Current Opening Threshold:'}
+                value={soilLevel}
+                accentClass="info-admonition-blue"
+              />
+            </>
+          )}
+          {state === STATES.CHANGETHRESHOLD && (
+            <>
+              <InfoAdmonition
+                label={uiText.currentSoilMoistureLabel || 'Current Soil Moisture:'}
+                value={soilMoisture}
+                accentClass="info-admonition-blue"
+              />
+            </>
+          )}
           {stateDescriptions[state]?.detailed && stateDescriptions[state]?.detailed.trim() !== '' && (
             <DetailedDescription text={stateDescriptions[state].detailed} uiText={uiText} />
           )}
