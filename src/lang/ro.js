@@ -111,4 +111,5 @@ export const uiText = {
   pressTypeShort: "Apăsare scurtă",
   pressTypeLong: "Apăsare lungă",
   pressTypeVeryLong: "Apăsare foarte lungă",
+  pressConfirmed: "confirmată",
 };

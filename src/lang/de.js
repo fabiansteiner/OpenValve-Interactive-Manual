@@ -111,4 +111,5 @@ export const uiText = {
   pressTypeShort: "Kurzer Tastendruck",
   pressTypeLong: "Langer Tastendruck",
   pressTypeVeryLong: "Sehr langer Tastendruck",
+  pressConfirmed: "bestätigt",
 };

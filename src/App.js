@@ -21,6 +21,24 @@ function getLangModule(lang) {
 }
 
 const TIMEOUT_SECONDS = 3000; // 5 minutes timeout
+const LONG_PRESS_MS = 1000;
+const VERY_LONG_PRESS_MS = 3000;
+const PRESS_PROGRESS_INTERVAL_MS = 20;
+const CONFIRMATION_PULSE_MS = 300;
+const CONFIRMATION_DISPLAY_MS = 700;
+const CONFIRMATION_FADE_MS = 180;
+
+const PRESS_TYPES = Object.freeze({
+  SHORT: "SHORT",
+  LONG: "LONG",
+  VERY_LONG: "VERY_LONG"
+});
+
+const PRESS_COLORS = Object.freeze({
+  [PRESS_TYPES.SHORT]: "#4caf50",
+  [PRESS_TYPES.LONG]: "#ff9800",
+  [PRESS_TYPES.VERY_LONG]: "#f44336"
+});
 
 const STATES = Object.freeze({
   OFF: "OFF",
@@ -137,7 +155,6 @@ function LogoTopLeft() {
 
 function App() {
   const [state, setState] = useState(STATES.SLEEP);
-  const [pressStart, setPressStart] = useState(null);
   const [blueLedBlink, setBlueLedBlink] = useState(false);
   const [rgbLedColor, setRgbLedColor] = useState("transparent");
   const [rgbLedBlink, setRgbLedBlink] = useState(false);
@@ -150,14 +167,29 @@ function App() {
   const [timeoutCounter, setTimeoutCounter] = useState(TIMEOUT_SECONDS); // TIMEOUT_SECONDS seconds timeout
   const [sleepByTimeout, setSleepByTimeout] = useState(false); // Track if sleep was entered by timeout
   const [pressDuration, setPressDuration] = useState(0); // Track how long the button is pressed
+  const [pressConfirmation, setPressConfirmation] = useState(null);
   const [valveState, setValveState] = useState("CLOSED"); // New state: 'OPEN' or 'CLOSED'
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [buttonEverPressed, setButtonEverPressed] = useState(false); // New state to track if button was ever pressed
   const timeoutRef = React.useRef();
   const progressTimerRef = React.useRef();
+  const longPressTimerRef = React.useRef();
+  const veryLongPressTimerRef = React.useRef();
+  const confirmationFadeTimerRef = React.useRef();
+  const confirmationClearTimerRef = React.useRef();
   const pressStartRef = React.useRef(null);
+  const activePointerRef = React.useRef(null);
+  const longPressTriggeredRef = React.useRef(false);
+  const veryLongPressTriggeredRef = React.useRef(false);
+  const pressConfirmationRef = React.useRef(null);
+  const confirmationSequenceRef = React.useRef(0);
+  const stateRef = React.useRef(state);
+  const valveStateRef = React.useRef(valveState);
   const isFirstValveState = React.useRef(true); // <-- Add this line
+
+  stateRef.current = state;
+  valveStateRef.current = valveState;
 
   // Track language for dropdown (default: browser or en)
   const [lang, setLang] = React.useState((window.location.search.match(/lang=([a-z]{2})/)?.[1] || (navigator.language || "en").slice(0,2).toLowerCase()));
@@ -401,82 +433,42 @@ function App() {
     }
   }, [state]);
 
-  const getPressTypeLabel = () => {
-    if (pressDuration < 1) return uiText.pressTypeShort;
-    if (pressDuration < 2) return uiText.pressTypeLong;
-    return uiText.pressTypeVeryLong;
+  const getPressType = (duration) => {
+    if (duration < LONG_PRESS_MS / 1000) return PRESS_TYPES.SHORT;
+    if (duration < VERY_LONG_PRESS_MS / 1000) return PRESS_TYPES.LONG;
+    return PRESS_TYPES.VERY_LONG;
   };
 
-  const getProgressBarColor = () => {
-    // Use green, orange, red for intuitive feedback
-    if (pressDuration < 1) return '#4caf50'; // green
-    if (pressDuration < 2) return '#ff9800'; // orange
-    return '#f44336'; // red
+  const getPressTypeLabel = (pressType) => {
+    if (pressType === PRESS_TYPES.LONG) return uiText.pressTypeLong;
+    if (pressType === PRESS_TYPES.VERY_LONG) return uiText.pressTypeVeryLong;
+    return uiText.pressTypeShort;
   };
-
-  const handleMouseDown = (...args) => {
-    setButtonEverPressed(true); // Track that the button was pressed at least once
-    resetTimeout();
-    const now = Date.now();
-    setPressStart(now);
-    pressStartRef.current = now;
-    setIsPressed(true);
-    setPressDuration(0);
-  };
-
-  const handleMouseUp = (...args) => {
-    resetTimeout();
-    const duration = (Date.now() - (pressStartRef.current || Date.now())) / 1000;
-    setPressDuration(0);
-    if (duration < 1) {
-      handleShortPress();
-    } else if (duration < 2) {
-      handleLongPress();
-    } else {
-      handleVeryLongPress();
-    }
-    setPressStart(null);
-    pressStartRef.current = null;
-    setIsPressed(false);
-  };
-
-  // Timer effect for live updating pressDuration
-  useEffect(() => {
-    let interval = null;
-    if (isPressed && pressStartRef.current) {
-      interval = setInterval(() => {
-        setPressDuration(((Date.now() - pressStartRef.current) / 1000));
-      }, 20);
-    } else {
-      setPressDuration(0);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isPressed]);
 
   const handleShortPress = () => {
-    console.log("Short press in state:", state);
-    if (state === STATES.BATTERY) {
+    const currentState = stateRef.current;
+    console.log("Short press in state:", currentState);
+    if (currentState === STATES.BATTERY) {
       setState(STATES.SHOWSOILMOISTURE);
-    } else if (state === STATES.SHOWSOILMOISTURE) {
+    } else if (currentState === STATES.SHOWSOILMOISTURE) {
       setState(STATES.BATTERY);
-    } else if (state === STATES.MANUAL) {
+    } else if (currentState === STATES.MANUAL) {
       setState(STATES.SHOWSOILMOISTURE);
       setValveState("CLOSED"); // Close valve manually
-    } else if (state === STATES.SLEEP) {
+    } else if (currentState === STATES.SLEEP) {
       setState(STATES.BATTERY);
-    } else if (state === STATES.SELECTTHRESHOLD) {
+    } else if (currentState === STATES.SELECTTHRESHOLD) {
       setState(STATES.SELECTMULTIPLICATOR);
-    } else if (state === STATES.SELECTMULTIPLICATOR) {
+    } else if (currentState === STATES.SELECTMULTIPLICATOR) {
       setState(STATES.SELECTTHRESHOLD);
-    } else if (state === STATES.CHANGETHRESHOLD) {
+    } else if (currentState === STATES.CHANGETHRESHOLD) {
       setSoilLevel(prev => prev === 8 ? 1 : prev + 1);
-    } else if (state === STATES.CHANGEMULTIPLICATOR) {
+    } else if (currentState === STATES.CHANGEMULTIPLICATOR) {
       setMultiplicator(prev => prev === 5 ? 1 : prev + 1);
-    } else if (state === STATES.SLEEP) {
-      setState(STATES.BATTERY);
+    } else {
+      return false;
     }
+    return true;
   };
 
   // Helper: double green blink, then callback
@@ -505,23 +497,29 @@ function App() {
   };
 
   const handleLongPress = () => {
-    console.log("Long press in state:", state);
-    if (state === STATES.BATTERY) {
+    const currentState = stateRef.current;
+    console.log("Long press in state:", currentState);
+    if (currentState === STATES.BATTERY) {
       doubleGreenBlink(() => setState(STATES.SELECTTHRESHOLD));
-    } else if (state === STATES.SHOWSOILMOISTURE) {
-      if (valveState === "CLOSED") {
+      return { executed: true, stopSampling: false };
+    } else if (currentState === STATES.SHOWSOILMOISTURE) {
+      if (valveStateRef.current === "CLOSED") {
         setState(STATES.MANUAL); // Exception: no blink
         setValveState("OPEN"); // Open valve manually
+        return { executed: true, stopSampling: false };
       }
-      // else do nothing if valve is OPEN
-    } else if (state === STATES.SELECTTHRESHOLD) {
+    } else if (currentState === STATES.SELECTTHRESHOLD) {
       doubleGreenBlink(() => setState(STATES.CHANGETHRESHOLD));
-    } else if (state === STATES.SELECTMULTIPLICATOR) {
+      return { executed: true, stopSampling: false };
+    } else if (currentState === STATES.SELECTMULTIPLICATOR) {
       doubleGreenBlink(() => setState(STATES.CHANGEMULTIPLICATOR));
-    } else if (state === STATES.CHANGETHRESHOLD || state === STATES.CHANGEMULTIPLICATOR) {
+      return { executed: true, stopSampling: false };
+    } else if (currentState === STATES.CHANGETHRESHOLD || currentState === STATES.CHANGEMULTIPLICATOR) {
       setSleepByTimeout(false); // Set flag for button-based sleep
       doubleGreenBlink(() => setState(STATES.SLEEP));
+      return { executed: true, stopSampling: true };
     }
+    return { executed: false, stopSampling: false };
   };
 
   const blinkRedThreeTimes = (cb) => {
@@ -547,19 +545,203 @@ function App() {
   };
 
   const handleVeryLongPress = () => {
+    const currentState = stateRef.current;
     console.log("Very long press. Turning off.");
-    if(state===STATES.OFF){
+    if(currentState === STATES.OFF){
       setState(STATES.BATTERY);
+      return true;
     } else if (
-      state === STATES.BATTERY ||
-      state === STATES.SHOWSOILMOISTURE ||
-      state === STATES.MANUAL ||
-      state === STATES.SELECTTHRESHOLD ||
-      state === STATES.SELECTMULTIPLICATOR
+      currentState === STATES.BATTERY ||
+      currentState === STATES.SHOWSOILMOISTURE ||
+      currentState === STATES.MANUAL ||
+      currentState === STATES.SELECTTHRESHOLD ||
+      currentState === STATES.SELECTMULTIPLICATOR
     ) {
       blinkRedThreeTimes(() => { setState(STATES.OFF); setValveState("CLOSED"); });
+      return true;
+    }
+    return false;
+  };
+
+  const clearPressTimers = () => {
+    if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    if (veryLongPressTimerRef.current) clearTimeout(veryLongPressTimerRef.current);
+    progressTimerRef.current = null;
+    longPressTimerRef.current = null;
+    veryLongPressTimerRef.current = null;
+  };
+
+  const clearConfirmationTimers = () => {
+    if (confirmationFadeTimerRef.current) clearTimeout(confirmationFadeTimerRef.current);
+    if (confirmationClearTimerRef.current) clearTimeout(confirmationClearTimerRef.current);
+    confirmationFadeTimerRef.current = null;
+    confirmationClearTimerRef.current = null;
+  };
+
+  const clearPressConfirmation = () => {
+    clearConfirmationTimers();
+    pressConfirmationRef.current = null;
+    setPressConfirmation(null);
+  };
+
+  const showPressConfirmation = (type, duration) => {
+    clearConfirmationTimers();
+    const confirmation = {
+      id: ++confirmationSequenceRef.current,
+      type,
+      duration,
+      fading: false
+    };
+    pressConfirmationRef.current = confirmation;
+    setPressConfirmation(confirmation);
+  };
+
+  const scheduleConfirmationDismissal = () => {
+    if (!pressConfirmationRef.current) return;
+    clearConfirmationTimers();
+    confirmationFadeTimerRef.current = setTimeout(() => {
+      const fadingConfirmation = pressConfirmationRef.current
+        ? { ...pressConfirmationRef.current, fading: true }
+        : null;
+      pressConfirmationRef.current = fadingConfirmation;
+      setPressConfirmation(fadingConfirmation);
+    }, CONFIRMATION_DISPLAY_MS);
+    confirmationClearTimerRef.current = setTimeout(() => {
+      pressConfirmationRef.current = null;
+      setPressConfirmation(null);
+      setPressDuration(0);
+    }, CONFIRMATION_DISPLAY_MS + CONFIRMATION_FADE_MS);
+  };
+
+  const stopPressSampling = (duration, preserveConfirmation = true) => {
+    clearPressTimers();
+    pressStartRef.current = null;
+    activePointerRef.current = null;
+    setIsPressed(false);
+
+    if (preserveConfirmation && pressConfirmationRef.current) {
+      const retainedConfirmation = {
+        ...pressConfirmationRef.current,
+        duration
+      };
+      pressConfirmationRef.current = retainedConfirmation;
+      setPressConfirmation(retainedConfirmation);
+      setPressDuration(duration);
+      scheduleConfirmationDismissal();
+    } else {
+      setPressDuration(0);
+      clearPressConfirmation();
     }
   };
+
+  const triggerLongPress = () => {
+    if (longPressTriggeredRef.current) return;
+    longPressTriggeredRef.current = true;
+    setPressDuration(LONG_PRESS_MS / 1000);
+    const result = handleLongPress();
+    if (!result.executed) return;
+
+    showPressConfirmation(PRESS_TYPES.LONG, LONG_PRESS_MS / 1000);
+    if (result.stopSampling) {
+      stopPressSampling(LONG_PRESS_MS / 1000, true);
+    }
+  };
+
+  const triggerVeryLongPress = () => {
+    if (veryLongPressTriggeredRef.current || pressStartRef.current === null) return;
+    veryLongPressTriggeredRef.current = true;
+    setPressDuration(VERY_LONG_PRESS_MS / 1000);
+    if (handleVeryLongPress()) {
+      showPressConfirmation(PRESS_TYPES.VERY_LONG, VERY_LONG_PRESS_MS / 1000);
+    }
+  };
+
+  const handlePointerDown = (event) => {
+    if (activePointerRef.current !== null) return;
+    event.preventDefault();
+    setButtonEverPressed(true);
+    resetTimeout();
+    clearPressConfirmation();
+
+    const pointerId = event.pointerId ?? "primary";
+    activePointerRef.current = pointerId;
+    longPressTriggeredRef.current = false;
+    veryLongPressTriggeredRef.current = false;
+    pressStartRef.current = Date.now();
+    setIsPressed(true);
+    setPressDuration(0);
+
+    try {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    } catch (error) {
+      // Pointer capture is an enhancement; timing still works without it.
+    }
+
+    progressTimerRef.current = setInterval(() => {
+      if (pressStartRef.current !== null) {
+        setPressDuration((Date.now() - pressStartRef.current) / 1000);
+      }
+    }, PRESS_PROGRESS_INTERVAL_MS);
+    longPressTimerRef.current = setTimeout(triggerLongPress, LONG_PRESS_MS);
+    veryLongPressTimerRef.current = setTimeout(triggerVeryLongPress, VERY_LONG_PRESS_MS);
+  };
+
+  const releasePointerCapture = (event) => {
+    try {
+      if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    } catch (error) {
+      // The browser releases capture automatically when the pointer ends.
+    }
+  };
+
+  const handlePointerUp = (event) => {
+    if (activePointerRef.current === null || activePointerRef.current !== (event.pointerId ?? "primary")) return;
+    event.preventDefault();
+    releasePointerCapture(event);
+    resetTimeout();
+
+    const duration = Math.max(0, (Date.now() - pressStartRef.current) / 1000);
+    if (duration < LONG_PRESS_MS / 1000 && !longPressTriggeredRef.current) {
+      if (handleShortPress()) {
+        showPressConfirmation(PRESS_TYPES.SHORT, duration);
+      }
+    } else {
+      triggerLongPress();
+      if (pressStartRef.current !== null && duration >= VERY_LONG_PRESS_MS / 1000) {
+        triggerVeryLongPress();
+      }
+    }
+
+    if (pressStartRef.current !== null) {
+      stopPressSampling(duration, true);
+    }
+  };
+
+  const handlePointerCancel = (event) => {
+    if (activePointerRef.current === null || activePointerRef.current !== (event.pointerId ?? "primary")) return;
+    releasePointerCapture(event);
+    const duration = pressStartRef.current === null
+      ? 0
+      : Math.max(0, (Date.now() - pressStartRef.current) / 1000);
+    stopPressSampling(duration, Boolean(pressConfirmationRef.current));
+  };
+
+  useEffect(() => () => {
+    clearPressTimers();
+    clearConfirmationTimers();
+  }, []);
+
+  const displayedPressDuration = isPressed
+    ? pressDuration
+    : (pressConfirmation?.duration ?? 0);
+  const displayedPressType = pressConfirmation?.type ?? getPressType(displayedPressDuration);
+  const displayedPressLabel = getPressTypeLabel(displayedPressType);
+  const displayedPressColor = PRESS_COLORS[displayedPressType];
+  const showPressFeedback = isPressed || Boolean(pressConfirmation);
+  const pressFeedbackConfirmed = Boolean(pressConfirmation);
 
   return (
     <div className="App">
@@ -580,7 +762,10 @@ function App() {
           alt="Valve background"
           className="valve-bg-img"
         />
-        <div className="valve-bg-foreground">
+        <div
+          className="valve-bg-foreground"
+          style={{ '--press-confirmation-pulse-duration': `${CONFIRMATION_PULSE_MS}ms` }}
+        >
           {/* Show the message and arrow until the button is pressed at least once */}
           {!buttonEverPressed && (
             <div className="press-to-start-message">
@@ -606,20 +791,32 @@ function App() {
           </div>
           {/* Always reserve space for the press type label above the button */}
           <div
-            className={`press-type-label${isPressed ? ' visible' : ''}`}
-            style={{ color: isPressed ? getProgressBarColor() : 'transparent', textShadow: isPressed ? '0 1px 4px rgba(0,0,0,0.18)' : 'none' }}
+            className={`press-type-label${showPressFeedback ? ' visible' : ''}${pressConfirmation?.fading ? ' fading' : ''}`}
+            style={{ color: showPressFeedback ? displayedPressColor : 'transparent' }}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
           >
-            {isPressed ? getPressTypeLabel() : ''}
+            {showPressFeedback && (
+              <span
+                key={pressConfirmation?.id ?? 'active-press'}
+                className={`press-type-feedback${pressFeedbackConfirmed ? ' confirmed' : ''}`}
+                aria-label={pressFeedbackConfirmed
+                  ? `${displayedPressLabel}, ${uiText.pressConfirmed}`
+                  : displayedPressLabel}
+              >
+                {pressFeedbackConfirmed && <span aria-hidden="true">✓ </span>}
+                {displayedPressLabel}
+              </span>
+            )}
           </div>
           <button
             className={`button${isPressed ? " pressed" : ""}`}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={() => { setIsPressed(false); setPressDuration(0); pressStartRef.current = null; }}
-            onTouchStart={e => { e.preventDefault(); if (!isPressed) handleMouseDown(); }}
-            onTouchEnd={e => { e.preventDefault(); if (isPressed) handleMouseUp(); }}
-            onTouchCancel={e => { e.preventDefault(); setIsPressed(false); setPressDuration(0); pressStartRef.current = null; }}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
             onContextMenu={e => e.preventDefault()} // Prevent context menu on long press
+            aria-label={uiText.pressToStart}
             style={{ position: 'relative' }}
           >
             {/* SVG circular progress inside the white circle */}
@@ -633,16 +830,18 @@ function App() {
                   fill="none"
                 />
                 {/* Overlay the progress bar when pressed */}
-                {isPressed && (
+                {showPressFeedback && (
                   <circle
+                    key={pressConfirmation?.id ?? 'active-progress'}
+                    className={pressFeedbackConfirmed ? 'press-progress-confirmed' : ''}
                     cx="28" cy="28" r="24"
-                    stroke={getProgressBarColor()}
+                    stroke={displayedPressColor}
                     strokeWidth="5"
                     fill="none"
                     strokeLinecap="round"
                     strokeDasharray={2 * Math.PI * 24}
-                    strokeDashoffset={2 * Math.PI * 24 * (1 - Math.min(pressDuration / 2.5, 1))}
-                    style={{ transition: 'stroke-dashoffset 0.02s linear, stroke 0.1s' }}
+                    strokeDashoffset={2 * Math.PI * 24 * (1 - Math.min(displayedPressDuration / (VERY_LONG_PRESS_MS / 1000), 1))}
+                    style={{ transition: 'stroke-dashoffset 0.02s linear, stroke 0.1s', color: displayedPressColor }}
                   />
                 )}
               </svg>
