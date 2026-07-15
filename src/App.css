@@ -301,6 +301,7 @@ body, html {
 
 /* Press type label above the button */
 .press-type-label {
+  width: 100%;
   margin-bottom: 14px;
   font-weight: bold;
   font-size: 1.1em;
@@ -363,7 +364,7 @@ body, html {
 
 .valve-bg-container {
   position: relative;
-  width: fit-content;
+  width: 300px;
   margin: 150px auto 50px auto
 }
 @media (max-width: 600px) {

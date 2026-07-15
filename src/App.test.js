@@ -38,6 +38,16 @@ describe("OpenValve button press timing", () => {
     expect(stateTitle()).toBe("Display Battery Level");
   };
 
+  const enterThresholdSelection = () => {
+    enterBattery();
+    pointerDown();
+    advance(1100);
+    pointerUp();
+    advance(700);
+    pointerId += 1;
+    expect(stateTitle()).toBe("Select Opening Threshold");
+  };
+
   beforeEach(() => {
     jest.useFakeTimers();
     window.history.replaceState({}, "", "/?lang=en");
@@ -96,7 +106,7 @@ describe("OpenValve button press timing", () => {
     expect(feedback().textContent).toContain("✓ Long Press");
   });
 
-  test("a continuous hold resolves very long press in the state reached by long press", () => {
+  test("a continuous hold from battery reaches very long press after the long transition", () => {
     enterBattery();
     pointerDown();
 
@@ -109,6 +119,38 @@ describe("OpenValve button press timing", () => {
     expect(feedback().textContent).toContain("✓ Very Long Press");
     expect(container.querySelector(".press-progress-confirmed").getAttribute("stroke-dashoffset")).toBe("0");
 
+    advance(2000);
+    expect(stateTitle()).toBe("Off");
+    pointerUp();
+  });
+
+  test("a hold starting in threshold selection can power off after entering threshold editing", () => {
+    enterThresholdSelection();
+    pointerDown();
+
+    advance(1000);
+    advance(800);
+    expect(stateTitle()).toBe("Change Opening Threshold:1");
+
+    advance(1200);
+    expect(feedback().textContent).toContain("Very Long Press");
+    advance(2000);
+    expect(stateTitle()).toBe("Off");
+    pointerUp();
+  });
+
+  test("a hold starting in additional-time selection can power off after entering additional-time editing", () => {
+    enterThresholdSelection();
+    shortPress();
+    expect(stateTitle()).toBe("Select Additional Time");
+
+    pointerDown();
+    advance(1000);
+    advance(800);
+    expect(stateTitle()).toBe("Change Additional Time:1");
+
+    advance(1200);
+    expect(feedback().textContent).toContain("Very Long Press");
     advance(2000);
     expect(stateTitle()).toBe("Off");
     pointerUp();

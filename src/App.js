@@ -179,6 +179,7 @@ function App() {
   const confirmationFadeTimerRef = React.useRef();
   const confirmationClearTimerRef = React.useRef();
   const pressStartRef = React.useRef(null);
+  const pressOriginStateRef = React.useRef(null);
   const activePointerRef = React.useRef(null);
   const longPressTriggeredRef = React.useRef(false);
   const veryLongPressTriggeredRef = React.useRef(false);
@@ -544,18 +545,17 @@ function App() {
     blink();
   };
 
-  const handleVeryLongPress = () => {
-    const currentState = stateRef.current;
-    console.log("Very long press. Turning off.");
-    if(currentState === STATES.OFF){
+  const handleVeryLongPress = (originState) => {
+    console.log("Very long press from state:", originState);
+    if(originState === STATES.OFF){
       setState(STATES.BATTERY);
       return true;
     } else if (
-      currentState === STATES.BATTERY ||
-      currentState === STATES.SHOWSOILMOISTURE ||
-      currentState === STATES.MANUAL ||
-      currentState === STATES.SELECTTHRESHOLD ||
-      currentState === STATES.SELECTMULTIPLICATOR
+      originState === STATES.BATTERY ||
+      originState === STATES.SHOWSOILMOISTURE ||
+      originState === STATES.MANUAL ||
+      originState === STATES.SELECTTHRESHOLD ||
+      originState === STATES.SELECTMULTIPLICATOR
     ) {
       blinkRedThreeTimes(() => { setState(STATES.OFF); setValveState("CLOSED"); });
       return true;
@@ -617,6 +617,7 @@ function App() {
   const stopPressSampling = (duration, preserveConfirmation = true) => {
     clearPressTimers();
     pressStartRef.current = null;
+    pressOriginStateRef.current = null;
     activePointerRef.current = null;
     setIsPressed(false);
 
@@ -652,7 +653,7 @@ function App() {
     if (veryLongPressTriggeredRef.current || pressStartRef.current === null) return;
     veryLongPressTriggeredRef.current = true;
     setPressDuration(VERY_LONG_PRESS_MS / 1000);
-    if (handleVeryLongPress()) {
+    if (handleVeryLongPress(pressOriginStateRef.current)) {
       showPressConfirmation(PRESS_TYPES.VERY_LONG, VERY_LONG_PRESS_MS / 1000);
     }
   };
@@ -669,6 +670,7 @@ function App() {
     longPressTriggeredRef.current = false;
     veryLongPressTriggeredRef.current = false;
     pressStartRef.current = Date.now();
+    pressOriginStateRef.current = stateRef.current;
     setIsPressed(true);
     setPressDuration(0);
 
