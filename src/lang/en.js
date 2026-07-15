@@ -106,8 +106,6 @@ export const uiText = {
   detailedShowLess: "Show less",
   valveOpened: "Valve opened",
   valveClosed: "Valve closed",
-  openingThresholdLabel: "Current Opening Threshold:",
-  currentSoilMoistureLabel: "Current Soil Moisture:",
   pressTypeShort: "Short Press",
   pressTypeLong: "Long Press",
   pressTypeVeryLong: "Very Long Press",

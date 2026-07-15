@@ -74,18 +74,6 @@ function DetailedDescription({ text, uiText }) {
   );
 }
 
-function InfoAdmonition({ label, value, accentClass = "" }) {
-  return (
-    <div className={`info-admonition ${accentClass}`.trim()}>
-      <div className="info-admonition-icon" aria-hidden="true">i</div>
-      <div className="info-admonition-body">
-        <span className="info-admonition-label">{label}</span>
-        <span className="info-admonition-value">{value}</span>
-      </div>
-    </div>
-  );
-}
-
 function LanguageDropdown({ currentLang, onChange }) {
   const [open, setOpen] = React.useState(false);
   const languages = [
@@ -870,24 +858,6 @@ function App() {
             )}
           </div>
           <div className="state-info-desc">{stateDescriptions[state]?.desc || ''}</div>
-          {state === STATES.SHOWSOILMOISTURE && (
-            <>
-              <InfoAdmonition
-                label={uiText.openingThresholdLabel || 'Current Opening Threshold:'}
-                value={soilLevel}
-                accentClass="info-admonition-blue"
-              />
-            </>
-          )}
-          {state === STATES.CHANGETHRESHOLD && (
-            <>
-              <InfoAdmonition
-                label={uiText.currentSoilMoistureLabel || 'Current Soil Moisture:'}
-                value={soilMoisture}
-                accentClass="info-admonition-blue"
-              />
-            </>
-          )}
           {stateDescriptions[state]?.detailed && stateDescriptions[state]?.detailed.trim() !== '' && (
             <DetailedDescription text={stateDescriptions[state].detailed} uiText={uiText} />
           )}

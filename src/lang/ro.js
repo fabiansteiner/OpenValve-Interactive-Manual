@@ -106,8 +106,6 @@ export const uiText = {
   detailedShowLess: "Afișează mai puțin",
   valveOpened: "Supapa a fost deschisă",
   valveClosed: "Supapa a fost închisă",
-  openingThresholdLabel: "Pragul curent de deschidere:",
-  currentSoilMoistureLabel: "Umiditatea curentă a solului:",
   pressTypeShort: "Apăsare scurtă",
   pressTypeLong: "Apăsare lungă",
   pressTypeVeryLong: "Apăsare foarte lungă",
